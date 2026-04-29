@@ -1,0 +1,114 @@
+<div class="min-h-screen bg-[#F8FAFC]">
+  <main class="max-w-[1280px] mx-auto px-6 py-8">
+    <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div>
+        <h1 class="text-3xl font-bold text-slate-900">Your Accounts</h1>
+        <p class="text-slate-500 mt-2">Manage your connected bank accounts and their budgets.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">{{ wallets.length }} active wallets</span>
+        <button routerLink="/" class="bg-primary text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 hover:opacity-90 transition-all">
+          <span class="material-symbols-outlined">add</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="py-24 flex flex-col items-center justify-center gap-4">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <p class="text-slate-500 font-medium">Fetching your accounts...</p>
+    </div>
+
+    <!-- Wallets Grid -->
+    <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div *ngFor="let w of wallets" 
+           class="bg-white border rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden flex flex-col justify-between min-h-[320px]"
+           [ngClass]="{
+             'border-warning/30 bg-warning/5': w.isWarning,
+             'border-error/20 bg-error/5': w.isCritical,
+             'border-slate-100': !w.isWarning && !w.isCritical
+           }">
+        
+        <!-- Indicator Strip -->
+        <div class="absolute left-0 top-0 bottom-0 w-1.5"
+             [ngClass]="{
+               'bg-warning': w.isWarning,
+               'bg-error': w.isCritical,
+               'bg-emerald-500': !w.isWarning && !w.isCritical
+             }"></div>
+
+        <div>
+          <div class="flex justify-between items-start mb-6 pl-2">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600">
+                <span class="material-symbols-outlined text-2xl">account_balance</span>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-slate-900">{{ w.bankName }}</h3>
+                <p class="text-xs text-slate-400 font-medium">**** {{ w.accountLastFour }}</p>
+              </div>
+            </div>
+            <span class="px-3 py-1 rounded-full text-[10px] font-bold tracking-widest border"
+                  [ngClass]="{
+                    'bg-warning/10 text-warning border-warning/20': w.isWarning,
+                    'bg-error/10 text-error border-error/20': w.isCritical,
+                    'bg-emerald-50 text-emerald-600 border-emerald-100': !w.isWarning && !w.isCritical
+                  }">
+              {{ w.statusLabel }}
+            </span>
+          </div>
+
+          <div class="mb-6 pl-2">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Available Balance</p>
+            <p class="text-3xl font-bold text-slate-900" [ngClass]="{'text-error': w.isCritical}">₹{{ w.balance | number:'1.2-2' }}</p>
+          </div>
+
+          <div class="space-y-3 mb-6 pl-2">
+            <div class="flex justify-between items-end">
+              <p class="text-[11px] text-slate-500 font-medium">Monthly Budget: ₹{{ w.monthlyLimit | number:'1.2-2' }}</p>
+              <span class="text-[11px] font-bold text-slate-900">{{ w.usagePercentage | number:'1.0-0' }}% Used</span>
+            </div>
+            
+            <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-700"
+                   [ngClass]="{
+                     'bg-emerald-500': !w.isWarning && !w.isCritical,
+                     'bg-warning': w.isWarning,
+                     'bg-error': w.isCritical
+                   }"
+                   [style.width.%]="w.usagePercentage > 100 ? 100 : w.usagePercentage"></div>
+            </div>
+            
+            <!-- Warning Messages -->
+            <p *ngIf="w.isWarning" class="text-[11px] text-warning font-bold flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">warning</span>
+              You've used over 50% of your limit
+            </p>
+            <p *ngIf="w.isCritical" class="text-[11px] text-error font-bold flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">error</span>
+              CRITICAL: You have exceeded 80% of your limit!
+            </p>
+          </div>
+        </div>
+
+        <div class="pl-2">
+          <button (click)="switchWallet(w.id)" 
+                  class="w-full py-3 rounded-xl border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all active:scale-95">
+            Switch to this Account
+          </button>
+        </div>
+      </div>
+
+      <!-- Add New Wallet Card -->
+      <div routerLink="/" class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-4 group hover:border-primary/50 transition-all cursor-pointer min-h-[320px]">
+        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-slate-300 group-hover:text-primary transition-all shadow-sm">
+          <span class="material-symbols-outlined text-3xl">add</span>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">Add New Bank Account</h3>
+          <p class="text-xs text-slate-400 mt-1">Connect securely to start tracking.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

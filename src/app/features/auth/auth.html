@@ -1,0 +1,86 @@
+<main class="flex min-h-screen items-center justify-center p-gutter bg-slate-50">
+  <div class="w-full max-w-md">
+    <!-- Logo & Branding -->
+    <div class="mb-xl flex flex-col items-center text-center">
+      <div class="w-20 h-20 rounded-2xl bg-primary flex items-center justify-center mb-md shadow-lg shadow-primary/20">
+        <span class="material-symbols-outlined text-on-primary text-4xl">payments</span>
+      </div>
+      <h2 class="font-display-md text-display-md text-on-surface mb-xs">FinExpense</h2>
+      <p class="font-body-lg text-body-lg text-on-surface-variant">Master your money with minimalist precision.</p>
+    </div>
+
+    <!-- Auth Card -->
+    <div class="bg-surface-container-lowest border border-outline-variant p-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+      <h3 class="font-display-sm text-display-sm text-on-surface mb-lg">
+        {{ isSignUp ? 'Create Account' : 'Welcome Back' }}
+      </h3>
+
+      <form class="space-y-lg" (ngSubmit)="onSubmit()">
+        <!-- Email Input -->
+        <div class="space-y-xs">
+          <label class="font-label-md text-label-md text-on-surface" for="email">Email Address</label>
+          <div class="relative group">
+            <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-primary transition-colors">mail</span>
+            <input 
+              class="w-full h-12 pl-12 pr-md font-body-md border border-outline-variant rounded-xl focus:ring-0 focus:border-primary transition-all outline-none bg-surface-bright" 
+              id="email" 
+              name="email" 
+              [(ngModel)]="email" 
+              placeholder="name@example.com" 
+              type="email" 
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Password Input -->
+        <div class="space-y-xs">
+          <label class="font-label-md text-label-md text-on-surface" for="password">Password</label>
+          <div class="relative group">
+            <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-primary transition-colors">lock</span>
+            <input 
+              class="w-full h-12 pl-12 pr-md font-body-md border border-outline-variant rounded-xl focus:ring-0 focus:border-primary transition-all outline-none bg-surface-bright" 
+              id="password" 
+              name="password" 
+              [(ngModel)]="password" 
+              placeholder="••••••••" 
+              type="password" 
+              required
+            />
+          </div>
+        </div>
+
+        <!-- CTA Button -->
+        <button 
+          class="w-full h-14 bg-primary text-on-primary font-label-lg rounded-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-sm shadow-md shadow-primary/10 disabled:opacity-50" 
+          type="submit"
+          [disabled]="isLoading"
+        >
+          <span *ngIf="!isLoading">{{ isSignUp ? 'Sign Up' : 'Sign In' }}</span>
+          <span *ngIf="isLoading" class="animate-spin material-symbols-outlined">progress_activity</span>
+          <span *ngIf="!isLoading" class="material-symbols-outlined text-[20px]">login</span>
+        </button>
+
+        <!-- Toggle Mode -->
+        <div class="pt-md text-center">
+          <p class="font-body-md text-on-surface-variant">
+            {{ isSignUp ? 'Already have an account?' : "Don't have an account?" }}
+            <button 
+              type="button" 
+              (click)="toggleMode()" 
+              class="text-primary font-semibold hover:underline underline-offset-4"
+            >
+              {{ isSignUp ? 'Sign In' : 'Create One' }}
+            </button>
+          </p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Security Note -->
+    <p class="mt-lg text-center font-label-sm text-outline flex items-center justify-center gap-xs">
+      <span class="material-symbols-outlined text-sm">shield</span>
+      Securely powered by Supabase Authentication
+    </p>
+  </div>
+</main>

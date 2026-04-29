@@ -1,0 +1,86 @@
+<div class="min-h-screen bg-[#F8FAFC]">
+  <main class="max-w-[1280px] mx-auto px-6 py-8">
+    <div class="flex flex-col gap-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-3xl font-bold text-slate-900">All Transactions</h1>
+          <p class="text-slate-500 mt-1">Review your spending history for the current period.</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-2xl">account_balance_wallet</span>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Total Spent</p>
+            <p class="text-xl font-bold text-slate-900">₹{{ totalAmount | number:'1.2-2' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transaction List Section -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div *ngIf="loading" class="py-20 flex flex-col items-center justify-center gap-4">
+          <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+          <p class="text-slate-500">Loading transactions...</p>
+        </div>
+
+        <div *ngIf="!loading && transactions.length > 0" class="divide-y divide-slate-100">
+          <div *ngFor="let t of transactions" class="p-4 hover:bg-slate-50 transition-colors flex items-center justify-between group">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-primary group-hover:text-white transition-all">
+                <span class="material-symbols-outlined text-2xl">{{ getIcon(t.main_category) }}</span>
+              </div>
+              <div class="flex flex-col">
+                <span class="font-bold text-slate-900">{{ t.note || t.sub_category || t.main_category }}</span>
+                <span class="text-xs text-slate-500">{{ t.main_category }} • {{ t.transaction_date | date:'mediumDate' }}</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="font-bold text-slate-900 text-lg">-₹{{ t.amount | number:'1.2-2' }}</span>
+              <div class="relative group/menu">
+                <button class="p-2 rounded-lg hover:bg-slate-200 transition-colors text-slate-400">
+                  <span class="material-symbols-outlined">more_vert</span>
+                </button>
+                <!-- Dropdown -->
+                <div class="absolute right-0 mt-1 w-36 bg-white border border-slate-200 rounded-xl shadow-xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all z-50">
+                  <div class="p-1.5 flex flex-col gap-1">
+                    <button (click)="openEditModal(t)" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors w-full text-left">
+                      <span class="material-symbols-outlined text-[18px]">edit</span>
+                      Edit
+                    </button>
+                    <button (click)="deleteTransaction(t.id)" class="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors w-full text-left">
+                      <span class="material-symbols-outlined text-[18px]">delete</span>
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Edit Modal -->
+        <app-add-transaction-modal 
+          *ngIf="isEditModalOpen" 
+          [transaction]="selectedTransaction"
+          (close)="closeEditModal()" 
+          (saved)="onTransactionUpdated()">
+        </app-add-transaction-modal>
+
+        <!-- Empty State -->
+        <div *ngIf="!loading && transactions.length === 0" class="py-24 flex flex-col items-center justify-center text-center gap-4">
+          <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center">
+            <span class="material-symbols-outlined text-4xl text-slate-300">payments</span>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-slate-900">No transactions found</h3>
+            <p class="text-slate-500">You haven't added any transactions for this period yet.</p>
+          </div>
+          <button routerLink="/dashboard" class="mt-4 px-6 py-2 bg-primary text-white rounded-lg font-semibold hover:opacity-90 transition-all">
+            Back to Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

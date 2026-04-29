@@ -1,0 +1,79 @@
+<body class="bg-surface-container-low min-h-screen flex items-center justify-center p-md sm:p-lg antialiased">
+  <main class="w-full max-w-[480px]">
+    <!-- Brand Header Context -->
+    <div class="flex items-center justify-between mb-xl">
+      <button routerLink="/" class="hover:bg-slate-200 transition-colors p-2 rounded-full active:opacity-70">
+        <span class="material-symbols-outlined text-slate-900">arrow_back</span>
+      </button>
+      <div class="flex items-center gap-sm">
+        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-on-primary">
+          <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">wallet</span>
+        </div>
+        <span class="font-headline-md text-headline-md text-on-surface tracking-tight">FinControl</span>
+      </div>
+      <div class="w-10"></div>
+    </div>
+    <!-- Main Onboarding Card -->
+    <div
+      class="bg-surface-container-lowest rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.02)] border border-surface-variant overflow-hidden">
+      <div class="p-xl border-b border-surface-variant bg-surface text-center">
+        <h1 class="font-display-sm text-display-sm text-on-surface mb-sm">
+          {{ isNewMonth ? 'New Month Setup' : 'Set your baseline' }}
+        </h1>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+          {{ isNewMonth ? 'Update your balance and limit for ' + currentMonthName + '.' : 'Enter your starting numbers to help us build your personalized dashboard.' }}
+        </p>
+      </div>
+      <div class="p-xl space-y-xl">
+        <!-- Input: Total Bank Balance -->
+        <div class="group">
+          <label class="block font-label-md text-label-md text-on-surface mb-sm flex items-center justify-between"
+            for="bank_balance">
+            <span>Total Bank Balance <span class="text-red-500">*</span></span>
+            <span class="material-symbols-outlined text-[16px] text-on-surface-variant cursor-help"
+              title="Combined total of checking and savings">info</span>
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-md flex items-center pointer-events-none">
+              <span class="font-headline-md text-headline-md text-on-surface-variant">₹</span>
+            </div>
+            <input [(ngModel)]="bankBalanceDisplay" (input)="formatInput($event, 'balance')"
+              class="block w-full pl-[2.5rem] pr-md py-md bg-surface border border-outline-variant rounded-lg font-headline-md text-headline-md text-on-surface placeholder:text-outline-variant focus:ring-0 focus:border-2 focus:border-primary transition-colors"
+              id="bank_balance" name="bank_balance" placeholder="0.00" type="text" />
+          </div>
+        </div>
+        <!-- Input: Monthly Spending Limit -->
+        <div class="group">
+          <label class="block font-label-md text-label-md text-on-surface mb-sm flex items-center justify-between"
+            for="monthly_limit">
+            <span>Monthly Spending Limit <span class="text-red-500">*</span></span>
+            <span class="material-symbols-outlined text-[16px] text-on-surface-variant cursor-help"
+              title="Your target maximum spend per month">info</span>
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-md flex items-center pointer-events-none">
+              <span class="font-headline-md text-headline-md text-on-surface-variant">₹</span>
+            </div>
+            <input [(ngModel)]="monthlyLimitDisplay" (input)="formatInput($event, 'limit')"
+              class="block w-full pl-[2.5rem] pr-md py-md bg-surface border border-outline-variant rounded-lg font-headline-md text-headline-md text-on-surface placeholder:text-outline-variant focus:ring-0 focus:border-2 focus:border-primary transition-colors"
+              id="monthly_limit" name="monthly_limit" placeholder="0.00" type="text" />
+          </div>
+          <p class="font-label-sm text-label-sm text-on-surface-variant mt-sm">This helps calculate your pacing alerts.
+          </p>
+        </div>
+      </div>
+      <div class="p-xl bg-surface-container-low border-t border-surface-variant">
+        <button (click)="onGetStarted()"
+          class="w-full py-md px-lg bg-primary text-on-primary rounded-lg font-label-md text-label-md flex items-center justify-center gap-sm hover:bg-on-surface-variant transition-colors active:scale-[0.98]"
+          type="button">
+          Get Started
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </button>
+        <div class="mt-md text-center">
+          <p class="font-label-sm text-label-sm text-on-surface-variant">You can always adjust these settings later in
+            your profile.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>

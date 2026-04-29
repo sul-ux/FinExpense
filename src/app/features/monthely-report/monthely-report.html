@@ -1,0 +1,96 @@
+<div class="min-h-screen bg-[#F8FAFC]">
+  <main class="max-w-[1280px] mx-auto px-6 py-8">
+    <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div>
+        <h1 class="text-3xl font-bold text-slate-900">Financial Reports</h1>
+        <p class="text-slate-500 mt-2">Review your monthly summaries and budget performance.</p>
+      </div>
+      <div class="flex gap-3">
+        <button class="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm">
+          <span class="material-symbols-outlined text-[20px]">filter_list</span>
+          Filter
+        </button>
+        <button class="bg-slate-900 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 hover:opacity-90 transition-all shadow-md">
+          <span class="material-symbols-outlined text-[20px]">download</span>
+          Export
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="py-24 flex flex-col items-center justify-center gap-4">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <p class="text-slate-500 font-medium">Preparing your reports...</p>
+    </div>
+
+    <!-- Monthly Reports Grid -->
+    <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div *ngFor="let report of reports" 
+           class="bg-white border rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden"
+           [ngClass]="{
+             'border-warning-container bg-warning/5': report.expensePercentage >= 50 && report.expensePercentage < 80,
+             'border-error/20 bg-error/5': report.expensePercentage >= 80,
+             'border-slate-100': report.expensePercentage < 50
+           }">
+        
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-slate-900 group-hover:text-primary transition-colors">
+            {{ report.monthName }} {{ report.year }}
+          </h3>
+          <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">chevron_right</span>
+        </div>
+
+        <div class="mb-6">
+          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Total Balance</p>
+          <p class="text-2xl font-bold text-slate-900">₹{{ report.totalBalance | number:'1.2-2' }}</p>
+        </div>
+
+        <div class="space-y-3 mb-6">
+          <div class="flex justify-between items-end">
+            <p class="text-xs text-slate-500 font-medium">Expenses / Budget</p>
+            <div class="text-right">
+              <span class="font-bold text-sm" [ngClass]="report.expensePercentage >= 80 ? 'text-error' : (report.expensePercentage >= 50 ? 'text-warning' : 'text-slate-900')">
+                ₹{{ report.totalExpense | number:'1.2-2' }}
+              </span>
+              <span class="text-xs text-slate-400 mx-1">/</span>
+              <span class="text-xs text-slate-400 font-medium">₹{{ report.budgetLimit | number:'1.2-2' }}</span>
+            </div>
+          </div>
+          
+          <!-- Progress Bar -->
+          <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden shadow-inner">
+            <div class="h-full rounded-full transition-all duration-700"
+                 [ngClass]="{
+                   'bg-primary': report.expensePercentage < 50,
+                   'bg-warning': report.expensePercentage >= 50 && report.expensePercentage < 80,
+                   'bg-error': report.expensePercentage >= 80
+                 }"
+                 [style.width.%]="report.expensePercentage > 100 ? 100 : report.expensePercentage"></div>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center p-4 rounded-xl"
+             [ngClass]="{
+               'bg-emerald-50 text-emerald-700': report.remainingBalance >= 0,
+               'bg-error/10 text-error': report.remainingBalance < 0
+             }">
+          <span class="text-xs font-bold uppercase tracking-tight">Remaining Balance</span>
+          <span class="font-bold text-sm">
+            {{ report.remainingBalance >= 0 ? '+' : '-' }}₹{{ absRemaining(report.remainingBalance) | number:'1.2-2' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="reports.length === 0" class="col-span-full py-24 flex flex-col items-center justify-center text-center gap-4">
+        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center">
+          <span class="material-symbols-outlined text-4xl text-slate-300">analytics</span>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-slate-900">No reports available</h3>
+          <p class="text-slate-500">Add some transactions to see your monthly analysis here.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
