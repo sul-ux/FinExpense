@@ -9,7 +9,7 @@ import { Transaction } from '../../shared/models/finance.model';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, AddTransactionModal],
+  imports: [CommonModule,  RouterLink, AddTransactionModal],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
