@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../../core/services/transaction.service';
 import { ExportService } from '../../core/services/export.service';
@@ -21,7 +21,7 @@ interface MonthlyReportItem {
 @Component({
   selector: 'app-monthely-report',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './monthely-report.html',
   styles: []
 })
@@ -178,7 +178,7 @@ export class MonthelyReport implements OnInit {
     this.isFilterVisible = !this.isFilterVisible;
   }
 
-  exportData() {
+  async exportData() {
     if (this.viewMode === 'summaries') {
       // Export summaries
       const summaryData = this.reports.map(r => ({
@@ -188,20 +188,20 @@ export class MonthelyReport implements OnInit {
         'Remaining': r.remainingBalance
       }));
       // Use Excel export for summaries as it's more structured
-      this.exportService.exportToExcel(this.allTransactions, 'Financial_Summaries');
+      await this.exportService.exportToExcel(this.allTransactions, 'Financial_Summaries');
     } else {
-      this.exportPdf();
+      await this.exportPdf();
     }
   }
 
-  exportPdf() {
+  async exportPdf() {
     const title = this.viewMode === 'all' ? 'All Transactions Report' : `${this.selectedReport?.monthName} ${this.selectedReport?.year} Detailed Report`;
-    this.exportService.exportToPdf(this.filteredTransactions, title);
+    await this.exportService.exportToPdf(this.filteredTransactions, title);
   }
 
-  exportExcel() {
+  async exportExcel() {
     const title = this.viewMode === 'all' ? 'All_Transactions' : `${this.selectedReport?.monthName}_${this.selectedReport?.year}_Report`;
-    this.exportService.exportToExcel(this.filteredTransactions, title);
+    await this.exportService.exportToExcel(this.filteredTransactions, title);
   }
 
   absRemaining(val: number): number {

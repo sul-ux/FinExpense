@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Transaction } from '../../shared/models/finance.model';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import * as XLSX from 'xlsx';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExportService {
-  exportToPdf(transactions: Transaction[], title: string = 'Transactions Report') {
+  async exportToPdf(transactions: Transaction[], title: string = 'Transactions Report') {
+    // Dynamic imports to reduce initial bundle size
+    const { default: jsPDF } = await import('jspdf');
+    const { default: autoTable } = await import('jspdf-autotable');
+    
     const doc = new jsPDF();
     
     // Title
@@ -50,7 +51,10 @@ export class ExportService {
     doc.save(`FinExpense_${new Date().getTime()}.pdf`);
   }
 
-  exportToExcel(transactions: Transaction[], fileName: string = 'Transactions') {
+  async exportToExcel(transactions: Transaction[], fileName: string = 'Transactions') {
+    // Dynamic import to reduce initial bundle size
+    const XLSX = await import('xlsx');
+    
     const worksheetData = transactions.map(t => ({
       'Date': new Date(t.transaction_date).toLocaleDateString(),
       'Category': t.main_category,
