@@ -148,12 +148,17 @@ export class AddTransactionModal implements OnInit {
         throw new Error('No active budget found. Please set your baseline first.');
       }
 
+      // Create a full timestamp by combining selected date with current time
+      const now = new Date();
+      const selectedDate = new Date(this.date);
+      selectedDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+
       const transactionData: Partial<Transaction> = {
         amount: this.amount,
         note: this.note,
         main_category: this.category,
         sub_category: this.subCategory,
-        transaction_date: this.date,
+        transaction_date: selectedDate.toISOString(),
         type: 'expense',
         budget_id: this.transaction?.budget_id || budgetId!
       };

@@ -6,7 +6,7 @@ import { Transaction, Wallet, MonthlyBudget } from '../../shared/models/finance.
   providedIn: 'root'
 })
 export class TransactionService {
-  constructor(private supabase: SupabaseService) {}
+  constructor(private supabase: SupabaseService) { }
 
   async getWallets() {
     const { data, error } = await this.supabase.client
@@ -19,7 +19,7 @@ export class TransactionService {
   async createWallet(wallet: Partial<Wallet>) {
     const user = await this.supabase.getUser();
     const walletWithUser = { ...wallet, user_id: user?.id };
-    
+
     const { data, error } = await this.supabase.client
       .from('wallets')
       .insert([walletWithUser])
@@ -67,8 +67,9 @@ export class TransactionService {
   async getTransactions(budgetId?: string) {
     let query = this.supabase.client.from('transactions').select('*');
     if (budgetId) query = query.eq('budget_id', budgetId);
-    
-    const { data, error } = await query.order('transaction_date', { ascending: false });
+
+    const { data, error } = await query
+      .order('transaction_date', { ascending: false })
     if (error) throw error;
     return data as Transaction[];
   }

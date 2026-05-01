@@ -1,19 +1,100 @@
 <div class="min-h-screen bg-[#F8FAFC]">
   <main class="max-w-[1280px] mx-auto px-6 py-8">
-    <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+
+    <!-- HEADER: Summaries Mode -->
+    <div *ngIf="viewMode === 'summaries'" class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
       <div>
         <h1 class="text-3xl font-bold text-slate-900">Financial Reports</h1>
         <p class="text-slate-500 mt-2">Review your monthly summaries and budget performance.</p>
       </div>
       <div class="flex gap-3">
-        <button class="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm">
-          <span class="material-symbols-outlined text-[20px]">filter_list</span>
-          Filter
+        <button (click)="showAllTransactions()"
+          class="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-xl font-bold flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm">
+          <span class="material-symbols-outlined text-[20px]">list_alt</span>
+          View All Transactions
         </button>
-        <button class="bg-slate-900 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 hover:opacity-90 transition-all shadow-md">
+        <button (click)="exportData()"
+          class="bg-slate-900 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 hover:opacity-90 transition-all shadow-md">
           <span class="material-symbols-outlined text-[20px]">download</span>
-          Export
+          Export Summaries
         </button>
+      </div>
+    </div>
+
+    <!-- HEADER: Detailed/All Mode -->
+    <div *ngIf="viewMode !== 'summaries'" class="mb-10 flex flex-col gap-6">
+      <div class="flex items-center gap-4">
+        <button (click)="backToSummaries()"
+          class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors shadow-sm">
+          <span class="material-symbols-outlined text-slate-600">arrow_back</span>
+        </button>
+        <div>
+          <h1 class="text-3xl font-bold text-slate-900">
+            {{ viewMode === 'all' ? 'All Account Transactions' : (selectedReport?.monthName + ' ' + selectedReport?.year
+            + ' Transactions') }}
+          </h1>
+          <p class="text-slate-500">Analyze your spending with detailed filters and export options.</p>
+        </div>
+      </div>
+
+      <!-- Filter Panel -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="font-bold text-slate-900 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">filter_list</span>
+            Advanced Filters
+          </h3>
+          <div class="flex gap-3">
+            <button (click)="exportPdf()"
+              class="text-sm font-bold text-red-600 hover:underline flex items-center gap-1">
+              <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span> PDF
+            </button>
+            <button (click)="exportExcel()"
+              class="text-sm font-bold text-emerald-600 hover:underline flex items-center gap-1">
+              <span class="material-symbols-outlined text-[18px]">description</span> Excel
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase">Start Date</label>
+            <input type="date" [(ngModel)]="filters.startDate" (change)="applyFilters()"
+              class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-0 text-sm">
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase">End Date</label>
+            <input type="date" [(ngModel)]="filters.endDate" (change)="applyFilters()"
+              class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-0 text-sm">
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase">Category</label>
+            <select [(ngModel)]="filters.category" (change)="applyFilters()"
+              class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-0 text-sm">
+              <option value="">All Categories</option>
+              <option *ngFor="let cat of categories" [value]="cat">{{cat}}</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase">Search</label>
+            <input type="text" [(ngModel)]="filters.search" (input)="applyFilters()" placeholder="Search notes..."
+              class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-0 text-sm">
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase">Min Amount</label>
+            <input type="number" [(ngModel)]="filters.minAmount" (input)="applyFilters()"
+              class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-0 text-sm">
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase">Max Amount</label>
+            <input type="number" [(ngModel)]="filters.maxAmount" (input)="applyFilters()"
+              class="w-full rounded-lg border-slate-200 focus:border-primary focus:ring-0 text-sm">
+          </div>
+          <div class="flex items-end lg:col-span-2">
+            <button (click)="clearFilters()" class="text-sm text-primary font-bold hover:underline">Clear All
+              Filters</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -23,21 +104,22 @@
       <p class="text-slate-500 font-medium">Preparing your reports...</p>
     </div>
 
-    <!-- Monthly Reports Grid -->
-    <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <div *ngFor="let report of reports" 
-           class="bg-white border rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden"
-           [ngClass]="{
+    <!-- CONTENT: Summaries Grid -->
+    <div *ngIf="!loading && viewMode === 'summaries'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div *ngFor="let report of reports" (click)="showMonthDetail(report)"
+        class="bg-white border rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group cursor-pointer relative overflow-hidden"
+        [ngClass]="{
              'border-warning-container bg-warning/5': report.expensePercentage >= 50 && report.expensePercentage < 80,
              'border-error/20 bg-error/5': report.expensePercentage >= 80,
              'border-slate-100': report.expensePercentage < 50
            }">
-        
+
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-xl font-bold text-slate-900 group-hover:text-primary transition-colors">
             {{ report.monthName }} {{ report.year }}
           </h3>
-          <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">chevron_right</span>
+          <span
+            class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">chevron_right</span>
         </div>
 
         <div class="mb-6">
@@ -49,28 +131,25 @@
           <div class="flex justify-between items-end">
             <p class="text-xs text-slate-500 font-medium">Expenses / Budget</p>
             <div class="text-right">
-              <span class="font-bold text-sm" [ngClass]="report.expensePercentage >= 80 ? 'text-error' : (report.expensePercentage >= 50 ? 'text-warning' : 'text-slate-900')">
+              <span class="font-bold text-sm"
+                [ngClass]="report.expensePercentage >= 80 ? 'text-error' : (report.expensePercentage >= 50 ? 'text-warning' : 'text-slate-900')">
                 ₹{{ report.totalExpense | number:'1.2-2' }}
               </span>
               <span class="text-xs text-slate-400 mx-1">/</span>
               <span class="text-xs text-slate-400 font-medium">₹{{ report.budgetLimit | number:'1.2-2' }}</span>
             </div>
           </div>
-          
-          <!-- Progress Bar -->
+
           <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden shadow-inner">
-            <div class="h-full rounded-full transition-all duration-700"
-                 [ngClass]="{
+            <div class="h-full rounded-full transition-all duration-700" [ngClass]="{
                    'bg-primary': report.expensePercentage < 50,
                    'bg-warning': report.expensePercentage >= 50 && report.expensePercentage < 80,
                    'bg-error': report.expensePercentage >= 80
-                 }"
-                 [style.width.%]="report.expensePercentage > 100 ? 100 : report.expensePercentage"></div>
+                 }" [style.width.%]="report.expensePercentage > 100 ? 100 : report.expensePercentage"></div>
           </div>
         </div>
 
-        <div class="flex justify-between items-center p-4 rounded-xl"
-             [ngClass]="{
+        <div class="flex justify-between items-center p-4 rounded-xl" [ngClass]="{
                'bg-emerald-50 text-emerald-700': report.remainingBalance >= 0,
                'bg-error/10 text-error': report.remainingBalance < 0
              }">
@@ -82,7 +161,8 @@
       </div>
 
       <!-- Empty State -->
-      <div *ngIf="reports.length === 0" class="col-span-full py-24 flex flex-col items-center justify-center text-center gap-4">
+      <div *ngIf="reports.length === 0"
+        class="col-span-full py-24 flex flex-col items-center justify-center text-center gap-4">
         <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center">
           <span class="material-symbols-outlined text-4xl text-slate-300">analytics</span>
         </div>
@@ -92,5 +172,49 @@
         </div>
       </div>
     </div>
+
+    <!-- CONTENT: Detailed Table View -->
+    <div *ngIf="!loading && viewMode !== 'summaries'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-slate-900">Transaction Analysis</h2>
+        <span class="text-sm font-medium text-slate-500">{{ filteredTransactions.length }} results found</span>
+      </div>
+
+      <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200">
+                <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Date</th>
+                <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Category</th>
+                <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Description</th>
+                <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Amount
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr *ngFor="let t of filteredTransactions" class="hover:bg-slate-50/50 transition-colors">
+                <td class="px-6 py-4 text-sm text-slate-600 font-medium">{{ t.transaction_date | date:'mediumDate' }}
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-md uppercase tracking-tight">
+                    {{ t.main_category }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-slate-900 font-semibold">{{ t.note || t.sub_category }}</td>
+                <td class="px-6 py-4 text-sm text-slate-900 font-bold text-right">₹{{ t.amount | number:'1.2-2' }}</td>
+              </tr>
+              <tr *ngIf="filteredTransactions.length === 0">
+                <td colspan="4" class="px-6 py-12 text-center text-slate-500 font-medium italic">
+                  No transactions match your current filters.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>

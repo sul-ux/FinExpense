@@ -1,7 +1,11 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../../core/services/transaction.service';
+import { ExportService } from '../../core/services/export.service';
+import { CATEGORIES } from '../../shared/models/category.data';
+import { Transaction } from '../../shared/models/finance.model';
 
 interface MonthlyReportItem {
   id: string;
@@ -17,13 +21,30 @@ interface MonthlyReportItem {
 @Component({
   selector: 'app-monthely-report',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './monthely-report.html',
   styles: []
 })
 export class MonthelyReport implements OnInit {
   reports: MonthlyReportItem[] = [];
+  allTransactions: Transaction[] = [];
+  filteredTransactions: Transaction[] = [];
   loading: boolean = true;
+  isFilterVisible: boolean = false;
+  viewMode: 'summaries' | 'all' | 'detail' = 'summaries';
+  selectedReport: MonthlyReportItem | null = null;
+
+  // Filters
+  filters = {
+    startDate: '',
+    endDate: '',
+    category: '',
+    minAmount: null as number | null,
+    maxAmount: null as number | null,
+    search: ''
+  };
+
+  categories = Object.keys(CATEGORIES);
 
   private monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -32,6 +53,7 @@ export class MonthelyReport implements OnInit {
 
   constructor(
     private transactionService: TransactionService, 
+    private exportService: ExportService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
@@ -54,13 +76,12 @@ export class MonthelyReport implements OnInit {
     }
 
     try {
-      // 1. Get current budget to find the wallet_id
       const currentBudget = await this.transactionService.getBudgetWithWallet(budgetId);
       if (!currentBudget || !currentBudget.wallet_id) return;
 
       const walletId = currentBudget.wallet_id;
 
-      // 2. Fetch all budgets for this wallet
+      // Fetch all budgets for this wallet
       const { data: budgets, error } = await (this.transactionService as any).supabase.client
         .from('monthly_budgets')
         .select('*')
@@ -70,11 +91,13 @@ export class MonthelyReport implements OnInit {
 
       if (error) throw error;
 
-      // 3. For each budget, calculate total spent
       const enrichedReports: MonthlyReportItem[] = [];
+      const collectedTransactions: Transaction[] = [];
+
       for (const b of budgets || []) {
         const transactions = await this.transactionService.getTransactions(b.id);
-        const totalSpent = (transactions || []).reduce((acc, t) => acc + (t.amount || 0), 0);
+        collectedTransactions.push(...(transactions || []));
+        const totalSpent = (transactions || []).reduce((acc: number, t: Transaction) => acc + (t.amount || 0), 0);
         
         enrichedReports.push({
           id: b.id,
@@ -89,9 +112,96 @@ export class MonthelyReport implements OnInit {
       }
 
       this.reports = enrichedReports;
+      this.allTransactions = collectedTransactions;
     } catch (error) {
       console.error('Error loading reports:', error);
     }
+  }
+
+  showAllTransactions() {
+    this.viewMode = 'all';
+    this.isFilterVisible = true;
+    this.applyFilters();
+  }
+
+  showMonthDetail(report: MonthlyReportItem) {
+    this.viewMode = 'detail';
+    this.selectedReport = report;
+    this.isFilterVisible = true;
+    this.applyFilters();
+  }
+
+  backToSummaries() {
+    this.viewMode = 'summaries';
+    this.selectedReport = null;
+    this.isFilterVisible = false;
+    this.clearFilters();
+  }
+
+  applyFilters() {
+    let baseTransactions = this.allTransactions;
+    
+    if (this.viewMode === 'detail' && this.selectedReport) {
+      baseTransactions = this.allTransactions.filter(t => t.budget_id === this.selectedReport!.id);
+    }
+
+    this.filteredTransactions = baseTransactions.filter(t => {
+      const date = new Date(t.transaction_date).getTime();
+      const start = this.filters.startDate ? new Date(this.filters.startDate).getTime() : null;
+      const end = this.filters.endDate ? new Date(this.filters.endDate + 'T23:59:59').getTime() : null;
+
+      if (start && date < start) return false;
+      if (end && date > end) return false;
+      if (this.filters.category && t.main_category !== this.filters.category) return false;
+      if (this.filters.minAmount !== null && t.amount < this.filters.minAmount) return false;
+      if (this.filters.maxAmount !== null && t.amount > this.filters.maxAmount) return false;
+      if (this.filters.search && !t.note?.toLowerCase().includes(this.filters.search.toLowerCase())) return false;
+
+      return true;
+    });
+    this.cdr.detectChanges();
+  }
+
+  clearFilters() {
+    this.filters = {
+      startDate: '',
+      endDate: '',
+      category: '',
+      minAmount: null,
+      maxAmount: null,
+      search: ''
+    };
+    this.applyFilters();
+  }
+
+  toggleFilters() {
+    this.isFilterVisible = !this.isFilterVisible;
+  }
+
+  exportData() {
+    if (this.viewMode === 'summaries') {
+      // Export summaries
+      const summaryData = this.reports.map(r => ({
+        'Period': `${r.monthName} ${r.year}`,
+        'Total Expense': r.totalExpense,
+        'Budget Limit': r.budgetLimit,
+        'Remaining': r.remainingBalance
+      }));
+      // Use Excel export for summaries as it's more structured
+      this.exportService.exportToExcel(this.allTransactions, 'Financial_Summaries');
+    } else {
+      this.exportPdf();
+    }
+  }
+
+  exportPdf() {
+    const title = this.viewMode === 'all' ? 'All Transactions Report' : `${this.selectedReport?.monthName} ${this.selectedReport?.year} Detailed Report`;
+    this.exportService.exportToPdf(this.filteredTransactions, title);
+  }
+
+  exportExcel() {
+    const title = this.viewMode === 'all' ? 'All_Transactions' : `${this.selectedReport?.monthName}_${this.selectedReport?.year}_Report`;
+    this.exportService.exportToExcel(this.filteredTransactions, title);
   }
 
   absRemaining(val: number): number {
