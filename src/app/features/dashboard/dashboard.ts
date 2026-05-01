@@ -68,15 +68,38 @@ export class Dashboard implements OnInit {
   }
 
   private async loadState() {
-    let budgetId = localStorage.getItem('active_budget_id');
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
     
+    let walletId = localStorage.getItem('active_wallet_id');
+    let budgetId = null;
+
+    // 1. Try to find if there's a budget for the current month
+    if (walletId) {
+      try {
+        const budget = await this.transactionService.getBudget(walletId, currentMonth, currentYear);
+        if (budget) {
+          budgetId = budget.id;
+          localStorage.setItem('active_budget_id', budgetId);
+        }
+      } catch (err) {
+        console.warn('Dashboard: Failed to fetch current month budget', err);
+      }
+    }
+
+    // 2. Fallback to stored budgetId if no current month found
+    if (!budgetId) {
+      budgetId = localStorage.getItem('active_budget_id');
+    }
+    
+    // 3. Complete fallback: fetch wallet and budget from scratch
     if (!budgetId) {
       try {
         const wallets = await this.transactionService.getWallets();
         if (wallets && wallets.length > 0) {
           const wallet = wallets[0];
-          const now = new Date();
-          const budget = await this.transactionService.getBudget(wallet.id, now.getMonth() + 1, now.getFullYear());
+          const budget = await this.transactionService.getBudget(wallet.id, currentMonth, currentYear);
           
           if (budget) {
             budgetId = budget.id;
@@ -87,7 +110,7 @@ export class Dashboard implements OnInit {
           }
         }
       } catch (err) {
-        console.error('Dashboard: Fallback error', err);
+        console.error('Dashboard: Full fallback error', err);
       }
     }
     

@@ -54,6 +54,8 @@ export class App {
           .maybeSingle();
 
         if (budget) {
+          localStorage.setItem('active_budget_id', budget.id);
+          localStorage.setItem('active_wallet_id', walletId);
           if (['/', '/auth', '/onboarding-baseline'].includes(currentUrl) || currentUrl === '') {
             this.router.navigate(['/dashboard']);
           }
