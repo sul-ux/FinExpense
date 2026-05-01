@@ -110,6 +110,7 @@ export class Wallet implements OnInit {
 
       if (budget) {
         localStorage.setItem('active_budget_id', budget.id);
+        localStorage.setItem('active_wallet_id', walletId);
         this.router.navigate(['/dashboard']);
       } else {
         this.loading = false;

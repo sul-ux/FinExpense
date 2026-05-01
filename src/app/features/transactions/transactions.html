@@ -1,5 +1,5 @@
 <div class="min-h-screen bg-[#F8FAFC]">
-  <main class="max-w-[1280px] mx-auto px-6 py-8">
+  <main class="max-w-[1280px] mx-auto px-6 py-8 pb-8 md:pb-8">
     <div class="flex flex-col gap-6">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -7,28 +7,27 @@
             <h1 class="text-3xl font-bold text-slate-900">All Transactions</h1>
             <p class="text-slate-500 mt-1">Review your spending history for the current period.</p>
           </div>
-          
+
           <!-- Export Button -->
           <div class="relative">
-            <button 
-              (click)="isExportMenuOpen = !isExportMenuOpen"
-              class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl shadow-sm text-slate-700 hover:bg-slate-50 transition-all font-semibold"
-            >
+            <button (click)="isExportMenuOpen = !isExportMenuOpen"
+              class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl shadow-sm text-slate-700 hover:bg-slate-50 transition-all font-semibold">
               <span class="material-symbols-outlined text-[20px]">download</span>
               Export
-              <span class="material-symbols-outlined text-[20px] transition-transform" [class.rotate-180]="isExportMenuOpen">expand_more</span>
+              <span class="material-symbols-outlined text-[20px] transition-transform"
+                [class.rotate-180]="isExportMenuOpen">expand_more</span>
             </button>
 
             <!-- Export Dropdown -->
-            <div 
-              *ngIf="isExportMenuOpen"
-              class="absolute left-0 mt-2 w-48 bg-white border border-slate-200 rounded-2xl shadow-xl z-[60] py-2 animate-in fade-in slide-in-from-top-2 duration-200"
-            >
-              <button (click)="exportPdf()" class="w-full flex items-center gap-3 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors text-left">
+            <div *ngIf="isExportMenuOpen"
+              class="absolute left-0 mt-2 w-48 bg-white border border-slate-200 rounded-2xl shadow-xl z-[60] py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+              <button (click)="exportPdf()"
+                class="w-full flex items-center gap-3 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors text-left">
                 <span class="material-symbols-outlined text-red-500">picture_as_pdf</span>
                 Download PDF
               </button>
-              <button (click)="exportExcel()" class="w-full flex items-center gap-3 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors text-left">
+              <button (click)="exportExcel()"
+                class="w-full flex items-center gap-3 px-4 py-2.5 text-slate-700 hover:bg-slate-50 transition-colors text-left">
                 <span class="material-symbols-outlined text-green-600">description</span>
                 Download Excel
               </button>
@@ -57,21 +56,26 @@
         <div *ngIf="!loading && transactions.length > 0" class="flex flex-col">
           <div *ngFor="let group of groupedTransactions" class="flex flex-col">
             <!-- Day Header -->
-            <div class="px-4 py-3 bg-slate-50/80 backdrop-blur-sm border-y border-slate-100 flex justify-between items-center sticky top-0 z-10">
-              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ group.date | date:'fullDate' }}</span>
+            <div
+              class="px-4 py-3 bg-slate-50/80 backdrop-blur-sm border-y border-slate-100 flex justify-between items-center sticky top-0 z-10">
+              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ group.date | date:'fullDate'
+                }}</span>
               <span class="text-sm font-bold text-slate-700">Total: ₹{{ group.total | number:'1.2-2' }}</span>
             </div>
 
             <!-- Transactions for the day -->
             <div class="divide-y divide-slate-50">
-              <div *ngFor="let t of group.transactions" class="p-4 hover:bg-slate-50/50 transition-colors flex items-center justify-between group">
+              <div *ngFor="let t of group.transactions"
+                class="p-4 hover:bg-slate-50/50 transition-colors flex items-center justify-between group">
                 <div class="flex items-center gap-4">
-                  <div class="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
+                  <div
+                    class="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
                     <span class="material-symbols-outlined text-2xl">{{ getIcon(t.main_category) }}</span>
                   </div>
                   <div class="flex flex-col">
                     <span class="font-bold text-slate-900">{{ t.note || t.sub_category || t.main_category }}</span>
-                    <span class="text-xs text-slate-500">{{ t.main_category }} • {{ t.transaction_date | date:'shortTime' }}</span>
+                    <span class="text-xs text-slate-500">{{ t.main_category }} • {{ t.transaction_date |
+                      date:'shortTime' }}</span>
                   </div>
                 </div>
                 <div class="flex items-center gap-4">
@@ -81,13 +85,16 @@
                       <span class="material-symbols-outlined">more_vert</span>
                     </button>
                     <!-- Dropdown -->
-                    <div class="absolute right-0 mt-1 w-36 bg-white border border-slate-200 rounded-xl shadow-xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all z-50">
+                    <div
+                      class="absolute right-0 mt-1 w-36 bg-white border border-slate-200 rounded-xl shadow-xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all z-50">
                       <div class="p-1.5 flex flex-col gap-1">
-                        <button (click)="openEditModal(t)" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors w-full text-left">
+                        <button (click)="openEditModal(t)"
+                          class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors w-full text-left">
                           <span class="material-symbols-outlined text-[18px]">edit</span>
                           Edit
                         </button>
-                        <button (click)="deleteTransaction(t.id)" class="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors w-full text-left">
+                        <button (click)="deleteTransaction(t.id)"
+                          class="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors w-full text-left">
                           <span class="material-symbols-outlined text-[18px]">delete</span>
                           Delete
                         </button>
@@ -101,15 +108,13 @@
         </div>
 
         <!-- Edit Modal -->
-        <app-add-transaction-modal 
-          *ngIf="isEditModalOpen" 
-          [transaction]="selectedTransaction"
-          (close)="closeEditModal()" 
-          (saved)="onTransactionUpdated()">
+        <app-add-transaction-modal *ngIf="isEditModalOpen" [transaction]="selectedTransaction"
+          (close)="closeEditModal()" (saved)="onTransactionUpdated()">
         </app-add-transaction-modal>
 
         <!-- Empty State -->
-        <div *ngIf="!loading && transactions.length === 0" class="py-24 flex flex-col items-center justify-center text-center gap-4">
+        <div *ngIf="!loading && transactions.length === 0"
+          class="py-24 flex flex-col items-center justify-center text-center gap-4">
           <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center">
             <span class="material-symbols-outlined text-4xl text-slate-300">payments</span>
           </div>
@@ -117,7 +122,8 @@
             <h3 class="text-xl font-bold text-slate-900">No transactions found</h3>
             <p class="text-slate-500">You haven't added any transactions for this period yet.</p>
           </div>
-          <button routerLink="/dashboard" class="mt-4 px-6 py-2 bg-primary text-white rounded-lg font-semibold hover:opacity-90 transition-all">
+          <button routerLink="/dashboard"
+            class="mt-4 px-6 py-2 bg-primary text-white rounded-lg font-semibold hover:opacity-90 transition-all">
             Back to Dashboard
           </button>
         </div>

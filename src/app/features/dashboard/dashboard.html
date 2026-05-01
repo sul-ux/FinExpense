@@ -3,156 +3,173 @@
   <p class="text-on-surface-variant font-label-md">Syncing your finances...</p>
 </div>
 
-<div *ngIf="!loading" class="min-h-screen flex flex-col antialiased" [ngClass]="{'bg-error-container text-on-error-container': isCritical, 'bg-[#F8FAFC] text-on-background': !isCritical}">
+<div *ngIf="!loading" class="min-h-screen flex flex-col antialiased"
+  [ngClass]="{'bg-error-container text-on-error-container': isCritical, 'bg-[#F8FAFC] text-on-background': !isCritical}">
   <div class="min-h-screen bg-[#F8FAFC]">
 
-  <!-- Warning/Critical Banners -->
-  <div *ngIf="isWarning" class="bg-warning-container text-on-warning-container px-6 py-3 flex items-center justify-center gap-3 w-full sticky top-[65px] z-30 shadow-sm border-b border-warning/20">
-    <span class="material-symbols-outlined fill text-[20px]">warning</span>
-    <p class="font-label-md">You've used over 50% of your monthly limit.</p>
-  </div>
-  <div *ngIf="isCritical" class="bg-error text-on-error px-6 py-3 flex items-center justify-center gap-3 w-full sticky top-[65px] z-30 shadow-sm border-b border-error/20">
-    <span class="material-symbols-outlined fill text-[20px]">warning</span>
-    <p class="font-label-md">CRITICAL: You have exceeded 80% of your monthly limit!</p>
-  </div>
-
-  <main class="flex-1 w-full max-w-[1280px] mx-auto px-6 py-xl flex flex-col gap-xl">
-    <section class="flex flex-col gap-sm">
-      <h1 class="font-headline-md">Overview</h1>
-      <p class="text-on-surface-variant">Here is your financial summary for today.</p>
-    </section>
-
-    <!-- Bento Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-md">
-      <!-- Fixed Premium Balance Card -->
-      <div class="md:col-span-8 border-none rounded-[24px] p-10 shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[280px] transition-all duration-700"
-           [style.background]="isCritical ? '#450a0a' : (isWarning ? '#422006' : '#0f172a')">
-        
-        <!-- Subtle Glow -->
-        <div class="absolute -top-24 -right-24 w-64 h-64 rounded-full blur-[80px] opacity-20 pointer-events-none"
-             [style.background]="isCritical ? '#f43f5e' : (isWarning ? '#fbbf24' : '#3b82f6')"></div>
-
-        <div class="flex justify-between items-start z-10">
-          <div class="flex flex-col gap-1.5">
-            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Current Balance</span>
-            <div class="h-1 w-8 rounded-full" [style.background]="isCritical ? '#f43f5e' : (isWarning ? '#fbbf24' : '#3b82f6')"></div>
-          </div>
-          <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-            <span class="material-symbols-outlined text-white/30">account_balance</span>
-          </div>
-        </div>
-
-        <div class="z-10 flex flex-col">
-          <h2 class="text-6xl font-extrabold tracking-tighter text-white flex items-baseline gap-2">
-            <span class="text-3xl font-medium text-white/30">₹</span>{{ totalBalance | number:'1.2-2' }}
-          </h2>
-        </div>
-
-        <div class="flex justify-between items-end z-10">
-          <div class="flex flex-col gap-1 text-white">
-            <span class="text-sm font-bold tracking-tight">{{ bankName }}</span>
-            <span class="text-[11px] font-medium text-white/40 tracking-widest uppercase">Account • {{ accountLastFour }}</span>
-          </div>
-          
-          <div class="px-5 py-2 rounded-xl border flex items-center gap-2" 
-               [style.background]="'rgba(255,255,255,0.05)'"
-               [style.borderColor]="isCritical ? 'rgba(244,63,94,0.3)' : (isWarning ? 'rgba(251,191,36,0.3)' : 'rgba(52,211,153,0.3)')">
-            <div class="w-1.5 h-1.5 rounded-full animate-pulse" [style.background]="isCritical ? '#f43f5e' : (isWarning ? '#fbbf24' : '#10b981')"></div>
-            <span class="text-[10px] font-black uppercase tracking-widest" [style.color]="isCritical ? '#fb7185' : (isWarning ? '#fbbf24' : '#34d399')">{{ statusLabel }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Limit Card -->
-      <div class="md:col-span-4 bg-surface-container-lowest border rounded-xl p-lg shadow-sm flex flex-col justify-between min-h-[240px]"
-        [ngClass]="{'border-error': isCritical, 'border-warning': isWarning, 'border-outline-variant': !isWarning && !isCritical}">
-        <div class="flex justify-between items-start">
-          <span class="font-label-md text-on-surface-variant flex items-center gap-2">
-            <span class="material-symbols-outlined text-[18px]">track_changes</span>
-            Monthly Limit
-          </span>
-          <span class="px-2 py-1 rounded border text-label-sm" 
-            [ngClass]="{'bg-error-container text-error border-error/20': isCritical, 'bg-warning-container text-warning border-warning/20': isWarning, 'bg-emerald-50 text-emerald-700 border-emerald-200': !isWarning && !isCritical}">
-            {{ statusLabel }}
-          </span>
-        </div>
-        <div class="flex flex-col gap-xs my-4">
-          <div class="flex items-end gap-2 text-on-surface">
-            <span class="font-display-sm">₹{{ totalSpent | number:'1.2-2' }}</span>
-            <span class="font-body-md text-on-surface-variant mb-1">/ ₹{{ monthlyLimit | number:'1.2-2' }}</span>
-          </div>
-          <p class="font-label-sm text-on-surface-variant">{{ usagePercentage | number:'1.0-0' }}% utilized this month</p>
-        </div>
-        <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
-          <div class="h-full rounded-full transition-all duration-500" 
-               [ngClass]="{'bg-error': isCritical, 'bg-warning': isWarning, 'bg-emerald-500': !isWarning && !isCritical}"
-               [style.width.%]="usagePercentage > 100 ? 100 : usagePercentage"></div>
-        </div>
-        <p class="font-label-sm text-on-surface-variant mt-2 text-right">₹{{ remainingBalance | number:'1.2-2' }} remaining</p>
-      </div>
-
-      <!-- Transactions -->
-      <div class="md:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm overflow-hidden">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="font-headline-md">Recent Transactions</h3>
-          <button class="font-label-md text-secondary hover:text-on-surface transition-colors flex items-center gap-1" routerLink="/transactions">
-            View All <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-          </button>
-        </div>
-        <div class="flex flex-col">
-          <div *ngFor="let t of recentTransactions" class="flex items-center justify-between py-4 border-b last:border-0 hover:bg-slate-50 transition-colors group cursor-pointer">
-            <div class="flex items-center gap-4">
-              <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary-fixed transition-colors">
-                <span class="material-symbols-outlined">{{ getIcon(t.main_category) }}</span>
-              </div>
-              <div class="flex flex-col">
-                <span class="font-label-md">{{ t.note || t.sub_category || t.main_category }}</span>
-                <p class="font-label-sm text-on-surface-variant">{{ t.main_category }} • {{ t.sub_category }} • {{ t.transaction_date | date:'mediumDate' }}</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-4">
-              <span class="font-numeric-data"> -₹{{ t.amount | number:'1.2-2' }}</span>
-              <button class="p-1 rounded-full hover:bg-surface-variant group/menu relative">
-                <span class="material-symbols-outlined text-[20px]">more_vert</span>
-              </button>
-            </div>
-          </div>
-          <div *ngIf="recentTransactions.length === 0" class="py-12 flex flex-col items-center justify-center text-on-surface-variant gap-2">
-            <span class="material-symbols-outlined text-[48px] opacity-20">payments</span>
-            <p class="font-body-md">No transactions yet. Add one to get started!</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Budget Health -->
-      <div class="md:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm flex flex-col gap-md">
-        <h3 class="font-headline-md">Budget Health</h3>
-        <div class="flex flex-col gap-4">
-          <div *ngFor="let cat of categorySpends">
-            <div class="flex justify-between items-end mb-1">
-              <span class="font-label-md">{{ cat.name }}</span>
-              <span class="font-numeric-data text-on-surface-variant text-sm">₹{{ cat.spent }} / ₹{{ cat.limit }}</span>
-            </div>
-            <div class="w-full bg-surface-variant rounded-full h-1.5">
-              <div class="h-1.5 rounded-full" [class]="cat.colorClass" [style.width.%]="cat.percentage"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- Warning/Critical Banners -->
+    <div *ngIf="isWarning"
+      class="bg-warning-container text-on-warning-container px-6 py-3 flex items-center justify-center gap-3 w-full sticky top-[65px] z-30 shadow-sm border-b border-warning/20">
+      <span class="material-symbols-outlined fill text-[20px]">warning</span>
+      <p class="font-label-md">You've used over 50% of your monthly limit.</p>
     </div>
-  </main>
+    <div *ngIf="isCritical"
+      class="bg-error text-on-error px-6 py-3 flex items-center justify-center gap-3 w-full sticky top-[65px] z-30 shadow-sm border-b border-error/20">
+      <span class="material-symbols-outlined fill text-[20px]">warning</span>
+      <p class="font-label-md">CRITICAL: You have exceeded 80% of your monthly limit!</p>
+    </div>
 
-  <!-- FAB -->
-  <button (click)="toggleModal()" class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-2xl shadow-xl flex items-center justify-center hover:opacity-90 active:scale-95 z-40">
-    <span class="material-symbols-outlined text-[28px]">add</span>
-  </button>
+    <main class="flex-1 w-full max-w-[1280px] mx-auto px-6 py-xl pb-8 md:pb-8 flex flex-col gap-xl">
+      <section class="flex flex-col gap-sm">
+        <h1 class="font-headline-md">Overview</h1>
+        <p class="text-on-surface-variant">Here is your financial summary for today.</p>
+      </section>
 
-  <!-- Add Transaction Modal -->
-  <app-add-transaction-modal 
-    *ngIf="isModalOpen" 
-    (close)="toggleModal()" 
-    (saved)="onTransactionSaved()">
-  </app-add-transaction-modal>
+      <!-- Bento Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-md">
+        <!-- Fixed Premium Balance Card -->
+        <div
+          class="md:col-span-8 border-none rounded-[24px] p-10 shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[280px] transition-all duration-700"
+          [style.background]="isCritical ? '#450a0a' : (isWarning ? '#422006' : '#0f172a')">
 
-</div>
+          <!-- Subtle Glow -->
+          <div class="absolute -top-24 -right-24 w-64 h-64 rounded-full blur-[80px] opacity-20 pointer-events-none"
+            [style.background]="isCritical ? '#f43f5e' : (isWarning ? '#fbbf24' : '#3b82f6')"></div>
+
+          <div class="flex justify-between items-start z-10">
+            <div class="flex flex-col gap-1.5">
+              <span class="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Current Balance</span>
+              <div class="h-1 w-8 rounded-full"
+                [style.background]="isCritical ? '#f43f5e' : (isWarning ? '#fbbf24' : '#3b82f6')"></div>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-white/30">account_balance</span>
+            </div>
+          </div>
+
+          <div class="z-10 flex flex-col">
+            <h2 class="text-6xl font-extrabold tracking-tighter text-white flex items-baseline gap-2">
+              <span class="text-3xl font-medium text-white/30">₹</span>{{ totalBalance | number:'1.2-2' }}
+            </h2>
+          </div>
+
+          <div class="flex justify-between items-end z-10">
+            <div class="flex flex-col gap-1 text-white">
+              <span class="text-sm font-bold tracking-tight">{{ bankName }}</span>
+              <span class="text-[11px] font-medium text-white/40 tracking-widest uppercase">Account • {{ accountLastFour
+                }}</span>
+            </div>
+
+            <div class="px-5 py-2 rounded-xl border flex items-center gap-2"
+              [style.background]="'rgba(255,255,255,0.05)'"
+              [style.borderColor]="isCritical ? 'rgba(244,63,94,0.3)' : (isWarning ? 'rgba(251,191,36,0.3)' : 'rgba(52,211,153,0.3)')">
+              <div class="w-1.5 h-1.5 rounded-full animate-pulse"
+                [style.background]="isCritical ? '#f43f5e' : (isWarning ? '#fbbf24' : '#10b981')"></div>
+              <span class="text-[10px] font-black uppercase tracking-widest"
+                [style.color]="isCritical ? '#fb7185' : (isWarning ? '#fbbf24' : '#34d399')">{{ statusLabel }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Limit Card -->
+        <div
+          class="md:col-span-4 bg-surface-container-lowest border rounded-xl p-lg shadow-sm flex flex-col justify-between min-h-[240px]"
+          [ngClass]="{'border-error': isCritical, 'border-warning': isWarning, 'border-outline-variant': !isWarning && !isCritical}">
+          <div class="flex justify-between items-start">
+            <span class="font-label-md text-on-surface-variant flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">track_changes</span>
+              Monthly Limit
+            </span>
+            <span class="px-2 py-1 rounded border text-label-sm"
+              [ngClass]="{'bg-error-container text-error border-error/20': isCritical, 'bg-warning-container text-warning border-warning/20': isWarning, 'bg-emerald-50 text-emerald-700 border-emerald-200': !isWarning && !isCritical}">
+              {{ statusLabel }}
+            </span>
+          </div>
+          <div class="flex flex-col gap-xs my-4">
+            <div class="flex items-end gap-2 text-on-surface">
+              <span class="font-display-sm">₹{{ totalSpent | number:'1.2-2' }}</span>
+              <span class="font-body-md text-on-surface-variant mb-1">/ ₹{{ monthlyLimit | number:'1.2-2' }}</span>
+            </div>
+            <p class="font-label-sm text-on-surface-variant">{{ usagePercentage | number:'1.0-0' }}% utilized this month
+            </p>
+          </div>
+          <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-500"
+              [ngClass]="{'bg-error': isCritical, 'bg-warning': isWarning, 'bg-emerald-500': !isWarning && !isCritical}"
+              [style.width.%]="usagePercentage > 100 ? 100 : usagePercentage"></div>
+          </div>
+          <p class="font-label-sm text-on-surface-variant mt-2 text-right">₹{{ remainingBalance | number:'1.2-2' }}
+            remaining</p>
+        </div>
+
+        <!-- Transactions -->
+        <div
+          class="md:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm overflow-hidden">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="font-headline-md">Recent Transactions</h3>
+            <button class="font-label-md text-secondary hover:text-on-surface transition-colors flex items-center gap-1"
+              routerLink="/transactions">
+              View All <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </button>
+          </div>
+          <div class="flex flex-col">
+            <div *ngFor="let t of recentTransactions"
+              class="flex items-center justify-between py-4 border-b last:border-0 hover:bg-slate-50 transition-colors group cursor-pointer">
+              <div class="flex items-center gap-4">
+                <div
+                  class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary-fixed transition-colors">
+                  <span class="material-symbols-outlined">{{ getIcon(t.main_category) }}</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="font-label-md">{{ t.note || t.sub_category || t.main_category }}</span>
+                  <p class="font-label-sm text-on-surface-variant">{{ t.main_category }} • {{ t.sub_category }} • {{
+                    t.transaction_date | date:'mediumDate' }}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-4">
+                <span class="font-numeric-data"> -₹{{ t.amount | number:'1.2-2' }}</span>
+                <button class="p-1 rounded-full hover:bg-surface-variant group/menu relative">
+                  <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                </button>
+              </div>
+            </div>
+            <div *ngIf="recentTransactions.length === 0"
+              class="py-12 flex flex-col items-center justify-center text-on-surface-variant gap-2">
+              <span class="material-symbols-outlined text-[48px] opacity-20">payments</span>
+              <p class="font-body-md">No transactions yet. Add one to get started!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Budget Health -->
+        <div
+          class="md:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm flex flex-col gap-md">
+          <h3 class="font-headline-md">Budget Health</h3>
+          <div class="flex flex-col gap-4">
+            <div *ngFor="let cat of categorySpends">
+              <div class="flex justify-between items-end mb-1">
+                <span class="font-label-md">{{ cat.name }}</span>
+                <span class="font-numeric-data text-on-surface-variant text-sm">₹{{ cat.spent }} / ₹{{ cat.limit
+                  }}</span>
+              </div>
+              <div class="w-full bg-surface-variant rounded-full h-1.5">
+                <div class="h-1.5 rounded-full" [class]="cat.colorClass" [style.width.%]="cat.percentage"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FAB -->
+    <button (click)="toggleModal()"
+      class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-2xl shadow-xl flex items-center justify-center hover:opacity-90 active:scale-95 z-40">
+      <span class="material-symbols-outlined text-[28px]">add</span>
+    </button>
+
+    <!-- Add Transaction Modal -->
+    <app-add-transaction-modal *ngIf="isModalOpen" (close)="toggleModal()" (saved)="onTransactionSaved()">
+    </app-add-transaction-modal>
+
+  </div>
 </div>

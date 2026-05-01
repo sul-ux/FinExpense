@@ -1,5 +1,5 @@
 <div class="min-h-screen bg-[#F8FAFC]">
-  <main class="max-w-[1280px] mx-auto px-6 py-8">
+  <main class="max-w-[1280px] mx-auto px-6 py-8 pb-8 md:pb-8">
 
     <!-- HEADER: Summaries Mode -->
     <div *ngIf="viewMode === 'summaries'" class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -173,27 +173,40 @@
       </div>
     </div>
 
-    <!-- CONTENT: Detailed Table View -->
-    <div *ngIf="!loading && viewMode !== 'summaries'" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold text-slate-900">Transaction Analysis</h2>
-        <span class="text-sm font-medium text-slate-500">{{ filteredTransactions.length }} results found</span>
+    <!-- CONTENT: Detailed Table View (Grouped by Month) -->
+    <div *ngIf="!loading && viewMode !== 'summaries'"
+      class="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
+
+      <!-- Empty State for filtered results -->
+      <div *ngIf="groupedTransactions.length === 0"
+        class="bg-white border border-slate-200 rounded-2xl p-12 text-center text-slate-500 font-medium italic shadow-sm">
+        No transactions match your current filters.
       </div>
 
-      <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+      <!-- Month Groups -->
+      <div *ngFor="let group of groupedTransactions"
+        class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+          <h2 class="text-lg font-bold text-slate-900">{{ group.title }}</h2>
+          <div class="text-right">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Monthly Total</p>
+            <p class="text-xl font-bold text-primary">₹{{ group.total | number:'1.2-2' }}</p>
+          </div>
+        </div>
+
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-slate-50 border-b border-slate-200">
-                <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Date</th>
-                <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Category</th>
+              <tr class="bg-white border-b border-slate-100">
+                <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider w-32">Date</th>
+                <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider w-40">Category</th>
                 <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Description</th>
-                <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Amount
-                </th>
+                <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right w-32">
+                  Amount</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr *ngFor="let t of filteredTransactions" class="hover:bg-slate-50/50 transition-colors">
+            <tbody class="divide-y divide-slate-50">
+              <tr *ngFor="let t of group.transactions" class="hover:bg-slate-50/30 transition-colors">
                 <td class="px-6 py-4 text-sm text-slate-600 font-medium">{{ t.transaction_date | date:'mediumDate' }}
                 </td>
                 <td class="px-6 py-4">
@@ -204,11 +217,6 @@
                 </td>
                 <td class="px-6 py-4 text-sm text-slate-900 font-semibold">{{ t.note || t.sub_category }}</td>
                 <td class="px-6 py-4 text-sm text-slate-900 font-bold text-right">₹{{ t.amount | number:'1.2-2' }}</td>
-              </tr>
-              <tr *ngIf="filteredTransactions.length === 0">
-                <td colspan="4" class="px-6 py-12 text-center text-slate-500 font-medium italic">
-                  No transactions match your current filters.
-                </td>
               </tr>
             </tbody>
           </table>

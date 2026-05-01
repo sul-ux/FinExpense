@@ -43,7 +43,7 @@ export class TransactionService {
   async createBudget(budget: Partial<MonthlyBudget>) {
     const { data, error } = await this.supabase.client
       .from('monthly_budgets')
-      .insert([budget])
+      .upsert(budget, { onConflict: 'wallet_id,month,year' })
       .select();
     if (error) throw error;
     return data?.[0] as MonthlyBudget;

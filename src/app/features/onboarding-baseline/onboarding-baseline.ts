@@ -68,23 +68,45 @@ export class OnboardingBaseline {
     try {
       // 1. Get or Create Wallet
       let walletId = localStorage.getItem('active_wallet_id');
-      let bankName = localStorage.getItem('bank_name') || localStorage.getItem('temp_bank_name') || 'Main Checking';
-      let accountLastFour = localStorage.getItem('account_last_four') || localStorage.getItem('temp_account_last_four') || '0000';
+      const tempBank = localStorage.getItem('temp_bank_name');
+      const tempLastFour = localStorage.getItem('temp_account_last_four');
+      
+      let bankName = '';
+      let accountLastFour = '';
 
-      if (!walletId) {
-        // Check Supabase if we have a wallet already
+      if (tempBank) {
+        // Explicitly adding a new account from OnboardingAccount
+        const newWallet = await this.transactionService.createWallet({
+          bank_name: tempBank,
+          account_last_four: tempLastFour || '0000'
+        });
+        walletId = newWallet.id;
+        bankName = newWallet.bank_name;
+        accountLastFour = newWallet.account_last_four;
+        
+        // Clear temp storage
+        localStorage.removeItem('temp_bank_name');
+        localStorage.removeItem('temp_account_last_four');
+      } else if (walletId) {
+        // Using existing active wallet (e.g. new month setup)
+        bankName = localStorage.getItem('bank_name') || 'Main Checking';
+        accountLastFour = localStorage.getItem('account_last_four') || '0000';
+      } else {
+        // Fallback: Check if user already has wallets in DB
         const wallets = await this.transactionService.getWallets();
         if (wallets && wallets.length > 0) {
           walletId = wallets[0].id;
           bankName = wallets[0].bank_name;
           accountLastFour = wallets[0].account_last_four;
         } else {
-          // Create new one
+          // Create a default one if absolutely nothing exists
           const newWallet = await this.transactionService.createWallet({
-            bank_name: bankName,
-            account_last_four: accountLastFour
+            bank_name: 'Main Checking',
+            account_last_four: '0000'
           });
           walletId = newWallet.id;
+          bankName = newWallet.bank_name;
+          accountLastFour = newWallet.account_last_four;
         }
       }
 

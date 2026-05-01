@@ -134,6 +134,14 @@ export class Dashboard implements OnInit {
       this.monthlyLimit = budget.monthly_limit;
       const startingBalance = budget.starting_balance;
 
+      // Sync back to localStorage for other components
+      if (budget.wallet) {
+        localStorage.setItem('active_wallet_id', budget.wallet.id);
+        localStorage.setItem('bank_name', budget.wallet.bank_name);
+        localStorage.setItem('account_last_four', budget.wallet.account_last_four);
+      }
+      localStorage.setItem('active_budget_id', budgetId);
+
       // 2. Fetch Transactions
       this.recentTransactions = await this.transactionService.getRecentTransactions(5, budgetId);
       const allTransactions = await this.transactionService.getTransactions(budgetId);

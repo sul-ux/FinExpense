@@ -207,4 +207,30 @@ export class MonthelyReport implements OnInit {
   absRemaining(val: number): number {
     return Math.abs(val);
   }
+
+  get totalFilteredAmount(): number {
+    return this.filteredTransactions.reduce((acc, t) => acc + (t.amount || 0), 0);
+  }
+
+  get groupedTransactions(): { title: string, transactions: Transaction[], total: number }[] {
+    const groups: { [key: string]: { title: string, transactions: Transaction[], total: number } } = {};
+    
+    this.filteredTransactions.forEach(t => {
+      const date = new Date(t.transaction_date);
+      const key = `${date.getFullYear()}-${date.getMonth()}`;
+      const title = `${this.monthNames[date.getMonth()]} ${date.getFullYear()}`;
+      
+      if (!groups[key]) {
+        groups[key] = { title, transactions: [], total: 0 };
+      }
+      
+      groups[key].transactions.push(t);
+      groups[key].total += (t.amount || 0);
+    });
+
+    // Sort groups by date descending
+    return Object.keys(groups)
+      .sort((a, b) => b.localeCompare(a))
+      .map(key => groups[key]);
+  }
 }
