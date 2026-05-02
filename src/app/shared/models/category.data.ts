@@ -10,6 +10,12 @@ export const CATEGORIES = {
   "Others": ["Pooja & Religious", "Festivals", "Gifts & Social", "Charity / Donation"]
 };
 
+export const INCOME_CATEGORIES = {
+  "Earning": ["Salary", "Freelance", "Bonus", "Commission"],
+  "Investments": ["Dividends", "Interest", "Rental Income", "Stock Profit"],
+  "Others": ["Gift", "Refund", "Cashback", "Other Income"]
+};
+
 export const CATEGORY_ICONS: Record<string, string> = {
   "Housing & Utilities": "home",
   "Food & Dining": "restaurant",
@@ -19,5 +25,7 @@ export const CATEGORY_ICONS: Record<string, string> = {
   "Lifestyle & Shopping": "shopping_bag",
   "Education & Kids": "school",
   "Savings & Debt": "savings",
-  "Others": "more_horiz"
+  "Others": "more_horiz",
+  "Earning": "payments",
+  "Investments": "trending_up"
 };

@@ -97,17 +97,19 @@ export class MonthelyReport implements OnInit {
       for (const b of budgets || []) {
         const transactions = await this.transactionService.getTransactions(b.id);
         collectedTransactions.push(...(transactions || []));
-        const totalSpent = (transactions || []).reduce((acc: number, t: Transaction) => acc + (t.amount || 0), 0);
+        
+        const totalIncome = (transactions || []).filter(t => t.type === 'income').reduce((acc, t) => acc + (t.amount || 0), 0);
+        const totalExpense = (transactions || []).filter(t => t.type === 'expense').reduce((acc, t) => acc + (t.amount || 0), 0);
         
         enrichedReports.push({
           id: b.id,
           monthName: this.monthNames[b.month - 1],
           year: b.year,
-          totalBalance: b.starting_balance - totalSpent,
-          totalExpense: totalSpent,
+          totalBalance: b.starting_balance + totalIncome - totalExpense,
+          totalExpense: totalExpense,
           budgetLimit: b.monthly_limit,
-          expensePercentage: b.monthly_limit > 0 ? (totalSpent / b.monthly_limit) * 100 : 0,
-          remainingBalance: b.monthly_limit - totalSpent
+          expensePercentage: b.monthly_limit > 0 ? (totalExpense / b.monthly_limit) * 100 : 0,
+          remainingBalance: b.monthly_limit - totalExpense
         });
       }
 
@@ -209,7 +211,9 @@ export class MonthelyReport implements OnInit {
   }
 
   get totalFilteredAmount(): number {
-    return this.filteredTransactions.reduce((acc, t) => acc + (t.amount || 0), 0);
+    return this.filteredTransactions
+      .filter(t => t.type === 'expense')
+      .reduce((acc, t) => acc + (t.amount || 0), 0);
   }
 
   get groupedTransactions(): { title: string, transactions: Transaction[], total: number }[] {
@@ -225,7 +229,11 @@ export class MonthelyReport implements OnInit {
       }
       
       groups[key].transactions.push(t);
-      groups[key].total += (t.amount || 0);
+      if (t.type === 'income') {
+        groups[key].total += (t.amount || 0);
+      } else {
+        groups[key].total -= (t.amount || 0);
+      }
     });
 
     // Sort groups by date descending

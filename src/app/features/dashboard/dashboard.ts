@@ -146,12 +146,15 @@ export class Dashboard implements OnInit {
       this.recentTransactions = await this.transactionService.getRecentTransactions(5, budgetId);
       const allTransactions = await this.transactionService.getTransactions(budgetId);
       
-      this.totalSpent = (allTransactions || []).reduce((acc, t) => acc + (t.amount || 0), 0);
-      this.totalBalance = startingBalance - this.totalSpent;
+      const totalIncome = (allTransactions || []).filter(t => t.type === 'income').reduce((acc, t) => acc + (t.amount || 0), 0);
+      const totalExpense = (allTransactions || []).filter(t => t.type === 'expense').reduce((acc, t) => acc + (t.amount || 0), 0);
       
-      // 3. Category Spends
+      this.totalSpent = totalExpense;
+      this.totalBalance = startingBalance + totalIncome - totalExpense;
+      
+      // 3. Category Spends (Only for Expenses)
       const spendsMap = new Map<string, number>();
-      (allTransactions || []).forEach(t => {
+      (allTransactions || []).filter(t => t.type === 'expense').forEach(t => {
         const cat = t.main_category || 'Other';
         spendsMap.set(cat, (spendsMap.get(cat) || 0) + (t.amount || 0));
       });

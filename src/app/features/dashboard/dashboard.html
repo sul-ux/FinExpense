@@ -1,11 +1,11 @@
-<div *ngIf="loading" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center gap-4">
+<div *ngIf="loading" class="fixed inset-0 bg-white dark:bg-slate-950 z-[100] flex flex-col items-center justify-center gap-4">
   <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-  <p class="text-on-surface-variant font-label-md">Syncing your finances...</p>
+  <p class="text-on-surface-variant dark:text-slate-400 font-label-md">Syncing your finances...</p>
 </div>
 
 <div *ngIf="!loading" class="min-h-screen flex flex-col antialiased"
-  [ngClass]="{'bg-error-container text-on-error-container': isCritical, 'bg-[#F8FAFC] text-on-background': !isCritical}">
-  <div class="min-h-screen bg-[#F8FAFC]">
+  [ngClass]="{'bg-error-container text-on-error-container': isCritical, 'bg-background dark:bg-slate-950 text-on-background dark:text-slate-100': !isCritical}">
+  <div class="min-h-screen bg-background dark:bg-slate-950">
 
     <!-- Warning/Critical Banners -->
     <div *ngIf="isWarning"
@@ -21,8 +21,8 @@
 
     <main class="flex-1 w-full max-w-[1280px] mx-auto px-6 py-xl pb-8 md:pb-8 flex flex-col gap-xl">
       <section class="flex flex-col gap-sm">
-        <h1 class="font-headline-md">Overview</h1>
-        <p class="text-on-surface-variant">Here is your financial summary for today.</p>
+        <h1 class="font-headline-md dark:text-slate-100">Overview</h1>
+        <p class="text-on-surface-variant dark:text-slate-400">Here is your financial summary for today.</p>
       </section>
 
       <!-- Bento Grid -->
@@ -73,27 +73,27 @@
 
         <!-- Limit Card -->
         <div
-          class="md:col-span-4 bg-surface-container-lowest border rounded-xl p-lg shadow-sm flex flex-col justify-between min-h-[240px]"
-          [ngClass]="{'border-error': isCritical, 'border-warning': isWarning, 'border-outline-variant': !isWarning && !isCritical}">
+          class="md:col-span-4 bg-surface-container-lowest dark:bg-slate-900 border rounded-xl p-lg shadow-sm flex flex-col justify-between min-h-[240px]"
+          [ngClass]="{'border-error': isCritical, 'border-warning': isWarning, 'border-outline-variant dark:border-slate-800': !isWarning && !isCritical}">
           <div class="flex justify-between items-start">
-            <span class="font-label-md text-on-surface-variant flex items-center gap-2">
+            <span class="font-label-md text-on-surface-variant dark:text-slate-400 flex items-center gap-2">
               <span class="material-symbols-outlined text-[18px]">track_changes</span>
               Monthly Limit
             </span>
             <span class="px-2 py-1 rounded border text-label-sm"
-              [ngClass]="{'bg-error-container text-error border-error/20': isCritical, 'bg-warning-container text-warning border-warning/20': isWarning, 'bg-emerald-50 text-emerald-700 border-emerald-200': !isWarning && !isCritical}">
+              [ngClass]="{'bg-error-container dark:bg-error/20 text-error border-error/20': isCritical, 'bg-warning-container dark:bg-warning/20 text-warning border-warning/20': isWarning, 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800': !isWarning && !isCritical}">
               {{ statusLabel }}
             </span>
           </div>
           <div class="flex flex-col gap-xs my-4">
-            <div class="flex items-end gap-2 text-on-surface">
+            <div class="flex items-end gap-2 text-on-surface dark:text-slate-100">
               <span class="font-display-sm">₹{{ totalSpent | number:'1.2-2' }}</span>
-              <span class="font-body-md text-on-surface-variant mb-1">/ ₹{{ monthlyLimit | number:'1.2-2' }}</span>
+              <span class="font-body-md text-on-surface-variant dark:text-slate-400 mb-1">/ ₹{{ monthlyLimit | number:'1.2-2' }}</span>
             </div>
-            <p class="font-label-sm text-on-surface-variant">{{ usagePercentage | number:'1.0-0' }}% utilized this month
+            <p class="font-label-sm text-on-surface-variant dark:text-slate-400">{{ usagePercentage | number:'1.0-0' }}% utilized this month
             </p>
           </div>
-          <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+          <div class="w-full bg-surface-container-high dark:bg-slate-800 h-2 rounded-full overflow-hidden">
             <div class="h-full rounded-full transition-all duration-500"
               [ngClass]="{'bg-error': isCritical, 'bg-warning': isWarning, 'bg-emerald-500': !isWarning && !isCritical}"
               [style.width.%]="usagePercentage > 100 ? 100 : usagePercentage"></div>
@@ -104,32 +104,34 @@
 
         <!-- Transactions -->
         <div
-          class="md:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm overflow-hidden">
+          class="md:col-span-8 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant dark:border-slate-800 rounded-xl p-lg shadow-sm overflow-hidden">
           <div class="flex justify-between items-center mb-6">
-            <h3 class="font-headline-md">Recent Transactions</h3>
-            <button class="font-label-md text-secondary hover:text-on-surface transition-colors flex items-center gap-1"
+            <h3 class="font-headline-md dark:text-slate-100">Recent Transactions</h3>
+            <button class="font-label-md text-secondary dark:text-slate-400 hover:text-on-surface dark:hover:text-slate-100 transition-colors flex items-center gap-1"
               routerLink="/transactions">
               View All <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
             </button>
           </div>
           <div class="flex flex-col">
             <div *ngFor="let t of recentTransactions"
-              class="flex items-center justify-between py-4 border-b last:border-0 hover:bg-slate-50 transition-colors group cursor-pointer">
+              class="flex items-center justify-between py-4 border-b dark:border-slate-800 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer">
               <div class="flex items-center gap-4">
                 <div
-                  class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary-fixed transition-colors">
+                  class="w-10 h-10 rounded-full bg-surface-container dark:bg-slate-800 flex items-center justify-center text-on-surface-variant dark:text-slate-400 group-hover:bg-primary-fixed transition-colors">
                   <span class="material-symbols-outlined">{{ getIcon(t.main_category) }}</span>
                 </div>
                 <div class="flex flex-col">
-                  <span class="font-label-md">{{ t.note || t.sub_category || t.main_category }}</span>
-                  <p class="font-label-sm text-on-surface-variant">{{ t.main_category }} • {{ t.sub_category }} • {{
+                  <span class="font-label-md dark:text-slate-100">{{ t.note || t.sub_category || t.main_category }}</span>
+                  <p class="font-label-sm text-on-surface-variant dark:text-slate-400">{{ t.main_category }} • {{ t.sub_category }} • {{
                     t.transaction_date | date:'mediumDate' }}</p>
                 </div>
               </div>
               <div class="flex items-center gap-4">
-                <span class="font-numeric-data"> -₹{{ t.amount | number:'1.2-2' }}</span>
-                <button class="p-1 rounded-full hover:bg-surface-variant group/menu relative">
-                  <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                <p class="font-bold" [ngClass]="t.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-slate-100'">
+                {{ t.type === 'income' ? '+' : '-' }}₹{{ t.amount | number:'1.2-2' }}
+              </p>
+                <button class="p-1 rounded-full hover:bg-surface-variant dark:hover:bg-slate-700 group/menu relative">
+                  <span class="material-symbols-outlined text-[20px] dark:text-slate-400">more_vert</span>
                 </button>
               </div>
             </div>
@@ -143,16 +145,16 @@
 
         <!-- Budget Health -->
         <div
-          class="md:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm flex flex-col gap-md">
-          <h3 class="font-headline-md">Budget Health</h3>
+          class="md:col-span-4 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant dark:border-slate-800 rounded-xl p-lg shadow-sm flex flex-col gap-md">
+          <h3 class="font-headline-md dark:text-slate-100">Budget Health</h3>
           <div class="flex flex-col gap-4">
             <div *ngFor="let cat of categorySpends">
               <div class="flex justify-between items-end mb-1">
-                <span class="font-label-md">{{ cat.name }}</span>
-                <span class="font-numeric-data text-on-surface-variant text-sm">₹{{ cat.spent }} / ₹{{ cat.limit
+                <span class="font-label-md dark:text-slate-100">{{ cat.name }}</span>
+                <span class="font-numeric-data text-on-surface-variant dark:text-slate-400 text-sm">₹{{ cat.spent }} / ₹{{ cat.limit
                   }}</span>
               </div>
-              <div class="w-full bg-surface-variant rounded-full h-1.5">
+              <div class="w-full bg-surface-variant dark:bg-slate-800 rounded-full h-1.5">
                 <div class="h-1.5 rounded-full" [class]="cat.colorClass" [style.width.%]="cat.percentage"></div>
               </div>
             </div>

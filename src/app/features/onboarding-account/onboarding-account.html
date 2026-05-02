@@ -1,12 +1,12 @@
-<header class="bg-slate-50 border-b border-slate-200 sticky top-0 z-50">
+<header class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
   <div class="flex items-center justify-between px-4 h-16 w-full max-w-7xl mx-auto">
     <div class="flex items-center gap-4">
-      <button routerLink="/wallet" class="hover:bg-slate-100 transition-colors p-2 rounded-full active:opacity-70">
-        <span class="material-symbols-outlined text-slate-900">arrow_back</span>
+      <button routerLink="/wallet" class="hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors p-2 rounded-full active:opacity-70">
+        <span class="material-symbols-outlined text-slate-900 dark:text-slate-100">arrow_back</span>
       </button>
-      <h1 class="font-public-sans font-semibold text-lg tracking-tight text-slate-900">Connect Account</h1>
+      <h1 class="font-public-sans font-semibold text-lg tracking-tight text-slate-900 dark:text-slate-100">Connect Account</h1>
     </div>
-    <button (click)="logout()" class="text-sm font-medium text-slate-500 hover:text-red-600 transition-colors flex items-center gap-2">
+    <button (click)="logout()" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-red-600 transition-colors flex items-center gap-2">
       <span class="material-symbols-outlined text-[18px]">logout</span>
       Logout
     </button>
@@ -16,43 +16,43 @@
   <div class="w-full max-w-lg">
     <!-- Illustration / Icon Section -->
     <div class="mb-xl flex flex-col items-center text-center">
-      <div class="w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center mb-md">
-        <span class="material-symbols-outlined text-on-secondary-container text-4xl">account_balance</span>
+      <div class="w-24 h-24 rounded-full bg-secondary-container dark:bg-slate-800 flex items-center justify-center mb-md">
+        <span class="material-symbols-outlined text-on-secondary-container dark:text-slate-400 text-4xl">account_balance</span>
       </div>
-      <h2 class="font-display-sm text-display-sm text-on-surface mb-xs">Connect Your Account</h2>
-      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-md">Enter your bank details to start tracking your finances.</p>
+      <h2 class="font-display-sm text-display-sm text-on-surface dark:text-slate-100 mb-xs">Connect Your Account</h2>
+      <p class="font-body-lg text-body-lg text-on-surface-variant dark:text-slate-400 max-w-md">Enter your bank details to start tracking your finances.</p>
     </div>
     <!-- Onboarding Card -->
-    <div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
+    <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant dark:border-slate-800 p-lg rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
       <form class="space-y-lg" (ngSubmit)="onSubmit()">
         <!-- Bank Name Input -->
         <div class="space-y-xs">
-          <label class="font-label-md text-label-md text-on-surface" for="bank_name">
+          <label class="font-label-md text-label-md text-on-surface dark:text-slate-300" for="bank_name">
             Bank Name <span class="text-red-500">*</span>
           </label>
           <div class="relative group">
-            <input class="w-full h-12 px-md font-body-md border border-outline-variant rounded-lg focus:ring-0 focus:border-primary transition-all outline-none bg-surface-bright" 
+            <input class="w-full h-12 px-md font-body-md border border-outline-variant dark:border-slate-800 rounded-lg focus:ring-0 focus:border-primary transition-all outline-none bg-surface-bright dark:bg-slate-800 dark:text-slate-100 placeholder:dark:text-slate-500" 
               id="bank_name" name="bank_name" [(ngModel)]="bankName" placeholder="e.g. Chase Bank" type="text" required/>
           </div>
         </div>
         <!-- Last 4 Digits Input -->
         <div class="space-y-xs">
-          <label class="font-label-md text-label-md text-on-surface" for="account_last_four">
+          <label class="font-label-md text-label-md text-on-surface dark:text-slate-300" for="account_last_four">
             Last 4 Digits of Account Number <span class="text-red-500">*</span>
           </label>
           <div class="relative flex items-center">
-            <div class="absolute left-md flex items-center gap-xs pointer-events-none text-outline">
+            <div class="absolute left-md flex items-center gap-xs pointer-events-none text-outline dark:text-slate-500">
               <span class="material-symbols-outlined text-[18px]">lock</span>
               <span class="font-numeric-data">•••• •••• ••••</span>
             </div>
-            <input class="w-full h-12 pl-[140px] pr-md font-numeric-data border border-outline-variant rounded-lg focus:ring-0 focus:border-primary transition-all outline-none bg-surface-bright placeholder:text-outline-variant" 
+            <input class="w-full h-12 pl-[140px] pr-md font-numeric-data border border-outline-variant dark:border-slate-800 rounded-lg focus:ring-0 focus:border-primary transition-all outline-none bg-surface-bright dark:bg-slate-800 dark:text-slate-100 placeholder:text-outline-variant" 
               id="account_last_four" maxlength="4" name="account_last_four" [(ngModel)]="accountLastFour" placeholder="1234" type="text" required/>
           </div>
         </div>
         <!-- Information Disclosure -->
-        <div class="flex gap-md p-md bg-surface-container-low rounded-lg border border-outline-variant/30">
-          <span class="material-symbols-outlined text-on-secondary-container">verified_user</span>
-          <p class="font-label-sm text-label-sm text-on-surface-variant">
+        <div class="flex gap-md p-md bg-surface-container-low dark:bg-slate-800/50 rounded-lg border border-outline-variant/30 dark:border-slate-700/30">
+          <span class="material-symbols-outlined text-on-secondary-container dark:text-slate-400">verified_user</span>
+          <p class="font-label-sm text-label-sm text-on-surface-variant dark:text-slate-400">
             Your financial security is our priority. We use 256-bit encryption to protect your account details.
           </p>
         </div>

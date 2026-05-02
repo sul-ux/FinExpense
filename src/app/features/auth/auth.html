@@ -1,28 +1,28 @@
-<main class="flex min-h-screen items-center justify-center p-gutter bg-slate-50">
+<main class="flex min-h-screen items-center justify-center p-gutter bg-slate-50 dark:bg-slate-950">
   <div class="w-full max-w-md">
     <!-- Logo & Branding -->
     <div class="mb-xl flex flex-col items-center text-center">
       <div class="w-20 h-20 rounded-2xl bg-primary flex items-center justify-center mb-md shadow-lg shadow-primary/20">
         <span class="material-symbols-outlined text-on-primary text-4xl">payments</span>
       </div>
-      <h2 class="font-display-md text-display-md text-on-surface mb-xs">FinExpense</h2>
-      <p class="font-body-lg text-body-lg text-on-surface-variant">Master your money with minimalist precision.</p>
+      <h2 class="font-display-md text-display-md text-on-surface dark:text-slate-100 mb-xs">FinExpense</h2>
+      <p class="font-body-lg text-body-lg text-on-surface-variant dark:text-slate-400">Master your money with minimalist precision.</p>
     </div>
 
     <!-- Auth Card -->
-    <div class="bg-surface-container-lowest border border-outline-variant p-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-      <h3 class="font-display-sm text-display-sm text-on-surface mb-lg">
+    <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant dark:border-slate-800 p-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+      <h3 class="font-display-sm text-display-sm text-on-surface dark:text-slate-100 mb-lg">
         {{ isSignUp ? 'Create Account' : 'Welcome Back' }}
       </h3>
 
       <form class="space-y-lg" (ngSubmit)="onSubmit()">
         <!-- Email Input -->
         <div class="space-y-xs">
-          <label class="font-label-md text-label-md text-on-surface" for="email">Email Address</label>
+          <label class="font-label-md text-label-md text-on-surface dark:text-slate-300" for="email">Email Address</label>
           <div class="relative group">
             <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-primary transition-colors">mail</span>
             <input 
-              class="w-full h-12 pl-12 pr-md font-body-md border border-outline-variant rounded-xl focus:ring-0 focus:border-primary transition-all outline-none bg-surface-bright" 
+              class="w-full h-12 pl-12 pr-md font-body-md border border-outline-variant dark:border-slate-800 rounded-xl focus:ring-0 focus:border-primary transition-all outline-none bg-surface-bright dark:bg-slate-800 dark:text-slate-100 placeholder:dark:text-slate-500" 
               id="email" 
               name="email" 
               [(ngModel)]="email" 
@@ -35,11 +35,11 @@
 
         <!-- Password Input -->
         <div class="space-y-xs">
-          <label class="font-label-md text-label-md text-on-surface" for="password">Password</label>
+          <label class="font-label-md text-label-md text-on-surface dark:text-slate-300" for="password">Password</label>
           <div class="relative group">
             <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-primary transition-colors">lock</span>
             <input 
-              class="w-full h-12 pl-12 pr-md font-body-md border border-outline-variant rounded-xl focus:ring-0 focus:border-primary transition-all outline-none bg-surface-bright" 
+              class="w-full h-12 pl-12 pr-md font-body-md border border-outline-variant dark:border-slate-800 rounded-xl focus:ring-0 focus:border-primary transition-all outline-none bg-surface-bright dark:bg-slate-800 dark:text-slate-100 placeholder:dark:text-slate-500" 
               id="password" 
               name="password" 
               [(ngModel)]="password" 
@@ -63,7 +63,7 @@
 
         <!-- Toggle Mode -->
         <div class="pt-md text-center">
-          <p class="font-body-md text-on-surface-variant">
+          <p class="font-body-md text-on-surface-variant dark:text-slate-400">
             {{ isSignUp ? 'Already have an account?' : "Don't have an account?" }}
             <button 
               type="button" 
@@ -78,7 +78,7 @@
     </div>
 
     <!-- Security Note -->
-    <p class="mt-lg text-center font-label-sm text-outline flex items-center justify-center gap-xs">
+    <p class="mt-lg text-center font-label-sm text-outline dark:text-slate-500 flex items-center justify-center gap-xs">
       <span class="material-symbols-outlined text-sm">shield</span>
       Securely powered by Supabase Authentication
     </p>

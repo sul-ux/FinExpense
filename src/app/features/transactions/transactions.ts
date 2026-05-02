@@ -37,7 +37,11 @@ export class Transactions implements OnInit {
         };
       }
       groups[dateKey].transactions.push(t);
-      groups[dateKey].total += t.amount || 0;
+      if (t.type === 'income') {
+        groups[dateKey].total += t.amount || 0;
+      } else {
+        groups[dateKey].total -= t.amount || 0;
+      }
     });
 
     // Convert to array and sort by date descending
@@ -92,7 +96,9 @@ export class Transactions implements OnInit {
 
     try {
       this.transactions = await this.transactionService.getTransactions(budgetId);
-      this.totalAmount = this.transactions.reduce((acc, t) => acc + (t.amount || 0), 0);
+      this.totalAmount = this.transactions
+        .filter(t => t.type === 'expense')
+        .reduce((acc, t) => acc + (t.amount || 0), 0);
     } catch (error) {
       console.error('Error loading transactions:', error);
     }

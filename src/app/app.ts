@@ -14,8 +14,10 @@ import { SupabaseService } from './core/services/supabase.service';
 export class App {
   protected readonly title = signal('FinExpense');
   showNavbar: boolean = false;
+  isDarkMode = signal<boolean>(false);
 
   constructor(private router: Router, private supabase: SupabaseService) {
+    this.initTheme();
     this.checkInitialSession();
     
     this.router.events.pipe(
@@ -84,5 +86,29 @@ export class App {
     ];
     keysToClear.forEach(key => localStorage.removeItem(key));
     this.router.navigate(['/auth']);
+  }
+
+  private initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      this.isDarkMode.set(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      this.isDarkMode.set(false);
+      document.documentElement.classList.remove('dark');
+    }
+  }
+
+  toggleTheme() {
+    this.isDarkMode.set(!this.isDarkMode());
+    if (this.isDarkMode()) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
   }
 }

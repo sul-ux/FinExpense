@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../../../core/services/transaction.service';
-import { CATEGORIES } from '../../models/category.data';
+import { CATEGORIES, INCOME_CATEGORIES } from '../../models/category.data';
 import { ToastrService } from 'ngx-toastr';
 import { Transaction } from '../../models/finance.model';
 
@@ -20,6 +20,27 @@ import { Transaction } from '../../models/finance.model';
           </button>
         </div>
         
+        <div class="p-6 pb-0 flex gap-2">
+          <button 
+            type="button" 
+            (click)="onTypeChange('expense')"
+            [class]="type === 'expense' ? 'bg-red-50 text-red-600 border-red-200 shadow-sm' : 'bg-surface-container-low text-on-surface-variant border-transparent'"
+            class="flex-1 py-2.5 rounded-xl border font-label-md transition-all flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined text-[18px]">trending_down</span>
+            Expense
+          </button>
+          <button 
+            type="button" 
+            (click)="onTypeChange('income')"
+            [class]="type === 'income' ? 'bg-emerald-50 text-emerald-600 border-emerald-200 shadow-sm' : 'bg-surface-container-low text-on-surface-variant border-transparent'"
+            class="flex-1 py-2.5 rounded-xl border font-label-md transition-all flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined text-[18px]">trending_up</span>
+            Income
+          </button>
+        </div>
+
         <form (ngSubmit)="onSubmit()" class="p-6 flex flex-col gap-4">
           <div class="flex flex-col gap-1">
             <label class="font-label-md text-on-surface-variant">Amount (₹)</label>
@@ -108,6 +129,7 @@ export class AddTransactionModal implements OnInit {
   @Output() saved = new EventEmitter<void>();
 
   amount: number | null = null;
+  type: 'expense' | 'income' = 'expense';
   note: string = '';
   category: string = 'Food & Dining';
   subCategory: string = 'Groceries';
@@ -125,16 +147,37 @@ export class AddTransactionModal implements OnInit {
   ngOnInit() {
     if (this.transaction) {
       this.amount = this.transaction.amount;
+      this.type = this.transaction.type;
       this.note = this.transaction.note;
+      this.updateCategoryLists();
       this.category = this.transaction.main_category;
-      this.subCategoryList = CATEGORIES[this.category as keyof typeof CATEGORIES] || [];
+      this.subCategoryList = (this.getCurrentCategories() as any)[this.category] || [];
       this.subCategory = this.transaction.sub_category;
       this.date = new Date(this.transaction.transaction_date).toISOString().split('T')[0];
     }
   }
 
+  getCurrentCategories() {
+    return this.type === 'expense' ? CATEGORIES : INCOME_CATEGORIES;
+  }
+
+  updateCategoryLists() {
+    const cats = this.getCurrentCategories();
+    this.categoryList = Object.keys(cats);
+    if (!this.categoryList.includes(this.category)) {
+      this.category = this.categoryList[0];
+      this.onCategoryChange();
+    }
+  }
+
+  onTypeChange(type: 'expense' | 'income') {
+    this.type = type;
+    this.updateCategoryLists();
+  }
+
   onCategoryChange() {
-    this.subCategoryList = CATEGORIES[this.category as keyof typeof CATEGORIES] || [];
+    const cats = this.getCurrentCategories();
+    this.subCategoryList = (cats as any)[this.category] || [];
     this.subCategory = this.subCategoryList[0] || '';
   }
 
@@ -159,7 +202,7 @@ export class AddTransactionModal implements OnInit {
         main_category: this.category,
         sub_category: this.subCategory,
         transaction_date: selectedDate.toISOString(),
-        type: 'expense',
+        type: this.type,
         budget_id: this.transaction?.budget_id || budgetId!
       };
 
