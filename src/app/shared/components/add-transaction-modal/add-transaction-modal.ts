@@ -11,12 +11,12 @@ import { Transaction } from '../../models/finance.model';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div class="bg-surface-container-lowest w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-        <div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
-          <h2 class="font-headline-sm">{{ transaction ? 'Edit' : 'Add' }} Transaction</h2>
-          <button (click)="close.emit()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-variant transition-colors">
-            <span class="material-symbols-outlined">close</span>
+    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div class="bg-surface-container-lowest dark:bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border dark:border-slate-800">
+        <div class="px-6 py-4 border-b border-outline-variant dark:border-slate-800 flex justify-between items-center">
+          <h2 class="font-headline-md dark:text-slate-100">{{ transaction ? 'Edit' : 'Add' }} Transaction</h2>
+          <button (click)="close.emit()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-variant dark:hover:bg-slate-800 transition-colors">
+            <span class="material-symbols-outlined dark:text-slate-400">close</span>
           </button>
         </div>
         
@@ -24,7 +24,7 @@ import { Transaction } from '../../models/finance.model';
           <button 
             type="button" 
             (click)="onTypeChange('expense')"
-            [class]="type === 'expense' ? 'bg-red-50 text-red-600 border-red-200 shadow-sm' : 'bg-surface-container-low text-on-surface-variant border-transparent'"
+            [class]="type === 'expense' ? 'bg-red-50 text-red-600 border-red-200 shadow-sm dark:bg-red-950/30 dark:text-red-400 dark:border-red-900/50' : 'bg-surface-container-low dark:bg-slate-800 text-on-surface-variant dark:text-slate-400 border-transparent'"
             class="flex-1 py-2.5 rounded-xl border font-label-md transition-all flex items-center justify-center gap-2"
           >
             <span class="material-symbols-outlined text-[18px]">trending_down</span>
@@ -33,7 +33,7 @@ import { Transaction } from '../../models/finance.model';
           <button 
             type="button" 
             (click)="onTypeChange('income')"
-            [class]="type === 'income' ? 'bg-emerald-50 text-emerald-600 border-emerald-200 shadow-sm' : 'bg-surface-container-low text-on-surface-variant border-transparent'"
+            [class]="type === 'income' ? 'bg-emerald-50 text-emerald-600 border-emerald-200 shadow-sm dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/50' : 'bg-surface-container-low dark:bg-slate-800 text-on-surface-variant dark:text-slate-400 border-transparent'"
             class="flex-1 py-2.5 rounded-xl border font-label-md transition-all flex items-center justify-center gap-2"
           >
             <span class="material-symbols-outlined text-[18px]">trending_up</span>
@@ -43,59 +43,59 @@ import { Transaction } from '../../models/finance.model';
 
         <form (ngSubmit)="onSubmit()" class="p-6 flex flex-col gap-4">
           <div class="flex flex-col gap-1">
-            <label class="font-label-md text-on-surface-variant">Amount (₹)</label>
+            <label class="font-label-md text-on-surface-variant dark:text-slate-400">Amount (₹)</label>
             <input 
               type="number" 
               [(ngModel)]="amount" 
               name="amount" 
               required
               placeholder="0.00"
-              class="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-display-sm focus:outline-primary outline-offset-0 transition-all"
+              class="bg-surface-container-low dark:bg-slate-800 border border-outline-variant dark:border-slate-700 rounded-lg px-4 py-3 font-display-sm focus:outline-primary outline-offset-0 transition-all dark:text-slate-100"
             >
           </div>
 
           <div class="flex flex-col gap-1">
-            <label class="font-label-md text-on-surface-variant">Note / Description</label>
+            <label class="font-label-md text-on-surface-variant dark:text-slate-400">Note / Description</label>
             <input 
               type="text" 
               [(ngModel)]="note" 
               name="note" 
               placeholder="What was this for?"
-              class="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-body-md focus:outline-primary outline-offset-0 transition-all"
+              class="bg-surface-container-low dark:bg-slate-800 border border-outline-variant dark:border-slate-700 rounded-lg px-4 py-3 font-body-md focus:outline-primary outline-offset-0 transition-all dark:text-slate-100"
             >
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div class="flex flex-col gap-1">
-              <label class="font-label-md text-on-surface-variant">Category</label>
+              <label class="font-label-md text-on-surface-variant dark:text-slate-400">Category</label>
               <select 
                 [(ngModel)]="category" 
                 name="category" 
                 (change)="onCategoryChange()"
-                class="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-body-md focus:outline-primary outline-offset-0 transition-all"
+                class="bg-surface-container-low dark:bg-slate-800 border border-outline-variant dark:border-slate-700 rounded-lg px-4 py-3 font-body-md focus:outline-primary outline-offset-0 transition-all dark:text-slate-100"
               >
-                <option *ngFor="let cat of categoryList" [value]="cat">{{cat}}</option>
+                <option *ngFor="let cat of categoryList" [value]="cat" class="dark:bg-slate-900">{{cat}}</option>
               </select>
             </div>
             <div class="flex flex-col gap-1">
-              <label class="font-label-md text-on-surface-variant">Sub-category</label>
+              <label class="font-label-md text-on-surface-variant dark:text-slate-400">Sub-category</label>
               <select 
                 [(ngModel)]="subCategory" 
                 name="subCategory" 
-                class="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-body-md focus:outline-primary outline-offset-0 transition-all"
+                class="bg-surface-container-low dark:bg-slate-800 border border-outline-variant dark:border-slate-700 rounded-lg px-4 py-3 font-body-md focus:outline-primary outline-offset-0 transition-all dark:text-slate-100"
               >
-                <option *ngFor="let sub of subCategoryList" [value]="sub">{{sub}}</option>
+                <option *ngFor="let sub of subCategoryList" [value]="sub" class="dark:bg-slate-900">{{sub}}</option>
               </select>
             </div>
           </div>
 
           <div class="flex flex-col gap-1">
-            <label class="font-label-md text-on-surface-variant">Date</label>
+            <label class="font-label-md text-on-surface-variant dark:text-slate-400">Date</label>
             <input 
               type="date" 
               [(ngModel)]="date" 
               name="date" 
-              class="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-body-md focus:outline-primary outline-offset-0 transition-all"
+              class="bg-surface-container-low dark:bg-slate-800 border border-outline-variant dark:border-slate-700 rounded-lg px-4 py-3 font-body-md focus:outline-primary outline-offset-0 transition-all dark:text-slate-100 [color-scheme:dark]"
             >
           </div>
 
@@ -103,14 +103,14 @@ import { Transaction } from '../../models/finance.model';
             <button 
               type="button" 
               (click)="close.emit()"
-              class="flex-1 px-4 py-3 rounded-xl border border-outline-variant font-label-lg hover:bg-surface-container-low transition-colors"
+              class="flex-1 px-4 py-3 rounded-xl border border-outline-variant dark:border-slate-700 font-label-lg hover:bg-surface-container-low dark:hover:bg-slate-800 dark:text-slate-300 transition-colors"
             >
               Cancel
             </button>
             <button 
               type="submit" 
               [disabled]="loading || !amount"
-              class="flex-1 px-4 py-3 rounded-xl bg-primary text-on-primary font-label-lg hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50"
+              class="flex-1 px-4 py-3 rounded-xl bg-primary dark:bg-slate-100 text-on-primary dark:text-slate-900 font-label-lg hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {{ loading ? 'Saving...' : 'Save Transaction' }}
             </button>
