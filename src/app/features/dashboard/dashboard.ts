@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { TransactionService } from '../../core/services/transaction.service';
 import { AddTransactionModal } from '../../shared/components/add-transaction-modal/add-transaction-modal';
-import { CATEGORY_ICONS } from '../../shared/models/category.data';
+import { CATEGORIES, CATEGORY_ICONS } from '../../shared/models/category.data';
 import { Transaction } from '../../shared/models/finance.model';
 
 @Component({
@@ -149,19 +149,26 @@ export class Dashboard implements OnInit {
       const totalIncome = (allTransactions || []).filter(t => t.type === 'income').reduce((acc, t) => acc + (t.amount || 0), 0);
       const totalExpense = (allTransactions || []).filter(t => t.type === 'expense').reduce((acc, t) => acc + (t.amount || 0), 0);
       
-      this.totalSpent = totalExpense;
+      this.totalSpent = totalExpense - totalIncome;
       this.totalBalance = startingBalance + totalIncome - totalExpense;
       
-      // 3. Category Spends (Only for Expenses)
+      // 3. Category Spends (Expenses offset by Income in the same category)
       const spendsMap = new Map<string, number>();
-      (allTransactions || []).filter(t => t.type === 'expense').forEach(t => {
-        const cat = t.main_category || 'Other';
-        spendsMap.set(cat, (spendsMap.get(cat) || 0) + (t.amount || 0));
+      (allTransactions || []).forEach(t => {
+        const cat = t.main_category || 'Others';
+        if (cat in CATEGORIES) {
+          const amount = t.amount || 0;
+          if (t.type === 'expense') {
+            spendsMap.set(cat, (spendsMap.get(cat) || 0) + amount);
+          } else if (t.type === 'income') {
+            spendsMap.set(cat, (spendsMap.get(cat) || 0) - amount);
+          }
+        }
       });
 
       this.categorySpends = Array.from(spendsMap.entries()).map(([name, spent]) => {
         const limit = 5000;
-        const percentage = Math.min((spent / limit) * 100, 100);
+        const percentage = Math.max(0, Math.min((spent / limit) * 100, 100));
         return { 
           name, spent, limit, percentage, 
           colorClass: percentage > 80 ? 'bg-error' : (percentage > 50 ? 'bg-warning' : 'bg-primary')
@@ -179,7 +186,7 @@ export class Dashboard implements OnInit {
       this.accountLastFour = localStorage.getItem('account_last_four') || '0000';
     }
     
-    this.usagePercentage = this.monthlyLimit > 0 ? Math.min((this.totalSpent / this.monthlyLimit) * 100, 100) : 0;
+    this.usagePercentage = this.monthlyLimit > 0 ? Math.max(0, Math.min((this.totalSpent / this.monthlyLimit) * 100, 100)) : 0;
     this.isWarning = this.usagePercentage >= 50 && this.usagePercentage < 80;
     this.isCritical = this.usagePercentage >= 80;
   }

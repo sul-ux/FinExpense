@@ -100,16 +100,17 @@ export class MonthelyReport implements OnInit {
         
         const totalIncome = (transactions || []).filter(t => t.type === 'income').reduce((acc, t) => acc + (t.amount || 0), 0);
         const totalExpense = (transactions || []).filter(t => t.type === 'expense').reduce((acc, t) => acc + (t.amount || 0), 0);
+        const netSpent = totalExpense - totalIncome;
         
         enrichedReports.push({
           id: b.id,
           monthName: this.monthNames[b.month - 1],
           year: b.year,
           totalBalance: b.starting_balance + totalIncome - totalExpense,
-          totalExpense: totalExpense,
+          totalExpense: netSpent,
           budgetLimit: b.monthly_limit,
-          expensePercentage: b.monthly_limit > 0 ? (totalExpense / b.monthly_limit) * 100 : 0,
-          remainingBalance: b.monthly_limit - totalExpense
+          expensePercentage: b.monthly_limit > 0 ? Math.max(0, Math.min((netSpent / b.monthly_limit) * 100, 100)) : 0,
+          remainingBalance: b.monthly_limit - netSpent
         });
       }
 
